@@ -17,18 +17,25 @@ function getRandomFood() {
 }
 
 module.exports = async (msg) => {
-  const { ruCardapio } = global.appContext;
+  // const { ruCardapio } = global.appContext;
 
-  if (!ruCardapio || !ruCardapio.length || !ruCardapio.almoco && !ruCardapio.jantar) {
-    const { protein: proteinAlmoco, sideDish: sideDishAlmoco, sauce: sauceAlmoco, dessert: dessertAlmoco } = getRandomFood();
-    const { protein: proteinJantar, sideDish: sideDishJantar, sauce: sauceJantar, dessert: dessertJantar } = getRandomFood();
+  // if (!ruCardapio || !ruCardapio.length || !ruCardapio.almoco && !ruCardapio.jantar) {
+  //   const { protein: proteinAlmoco, sideDish: sideDishAlmoco, sauce: sauceAlmoco, dessert: dessertAlmoco } = getRandomFood();
+  //   const { protein: proteinJantar, sideDish: sideDishJantar, sauce: sauceJantar, dessert: dessertJantar } = getRandomFood();
 
-    await msg.reply(
-      `Não foi possível buscar o cardápio do RU. Tente novamente mais tarde.\nMas com base em cálculos sofisticados, *SUPONHO* que será:\n\n*ALMOÇO*\n_Proteína_: ${proteinAlmoco}\n_molho_: ${sauceAlmoco}\n_Acompanhamento_: ${sideDishAlmoco}\n_Sobremesa_: ${dessertAlmoco}\n\n*JANTAR*\n_Proteína_: ${proteinJantar}\n_molho_: ${sauceJantar}\n_Acompanhamento_: ${sideDishJantar}\n_Sobremesa_: ${dessertJantar}`
-    );
-    return;
-  }
+  //   await msg.reply(
+  //     `Não foi possível buscar o cardápio do RU. Tente novamente mais tarde.\nMas com base em cálculos sofisticados, *SUPONHO* que será:\n\n*ALMOÇO*\n_Proteína_: ${proteinAlmoco}\n_molho_: ${sauceAlmoco}\n_Acompanhamento_: ${sideDishAlmoco}\n_Sobremesa_: ${dessertAlmoco}\n\n*JANTAR*\n_Proteína_: ${proteinJantar}\n_molho_: ${sauceJantar}\n_Acompanhamento_: ${sideDishJantar}\n_Sobremesa_: ${dessertJantar}`
+  //   );
+  //   return;
+  // }
   const menu = JSON.parse(ruCardapio);
+
+  menu[almoco] = {
+    "proteinas": "Frango assado",
+    "acompanhamentos": "Arroz refogado/Arroz integral, Feijão Carioca, Farofa de alho / Cuscuz com ovo cozido",
+    "suco": "goiaba",
+    "vegetariano": "Soja refogada com legumes",
+  }
 
 
   let message = `*Cardápio do RU*\n`;
