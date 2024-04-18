@@ -30,17 +30,20 @@ module.exports = async (msg) => {
   // }
   const menu = JSON.parse(ruCardapio);
 
-  console.log(menu)
-
   menu["almoco"] = {
     "proteinas": "Frango assado",
     "acompanhamentos": "Arroz refogado/Arroz integral, Feijão Carioca, Farofa de alho / Cuscuz com ovo cozido",
     "suco": "goiaba",
     "vegetariano": "Soja refogada com legumes",
   }
-
-
-  let message = `*Cardápio do RU*\n\n*Com base no Stories do Instagram\n\n`;
+  menu["jantar"] = {
+    "proteinas": "Carne moída, frango à passarinha e hamburguer ao molho de tomate",
+    "acompanhamentos": "Sopa de feijão (contém glúten), Cuscuz c/ verduras OU arroz refogado, pão/torradinha, arroz integral, banana ou melancia ou maçã",
+    "suco": "goiaba",
+    "vegetariano": "Almôndega de soja ao m. (Contém glúten e lactose) e soja c/ legumes",
+  }
+  
+  let message = `*Cardápio do RU*\n\n*Com base no Stories do Instagram - 18/04\n\n`;
 
   Object.entries(menu).forEach(([meal, types]) => {
     if (meal === "cafe") return;
