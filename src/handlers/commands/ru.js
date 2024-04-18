@@ -17,7 +17,7 @@ function getRandomFood() {
 }
 
 module.exports = async (msg) => {
-  // const { ruCardapio } = global.appContext;
+  const { ruCardapio } = global.appContext;
 
   // if (!ruCardapio || !ruCardapio.length || !ruCardapio.almoco && !ruCardapio.jantar) {
   //   const { protein: proteinAlmoco, sideDish: sideDishAlmoco, sauce: sauceAlmoco, dessert: dessertAlmoco } = getRandomFood();
