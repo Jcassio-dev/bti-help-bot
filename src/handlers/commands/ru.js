@@ -38,7 +38,7 @@ module.exports = async (msg) => {
   }
 
 
-  let message = `*Cardápio do RU*\n`;
+  let message = `*Cardápio do RU*\n*Com base no Stories do Instagram\n`;
 
   Object.entries(menu).forEach(([meal, types]) => {
     if (meal === "cafe") return;
