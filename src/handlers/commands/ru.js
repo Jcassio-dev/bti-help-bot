@@ -30,7 +30,9 @@ module.exports = async (msg) => {
   // }
   const menu = JSON.parse(ruCardapio);
 
-  menu[almoco] = {
+  console.log(menu)
+
+  menu["almoco"] = {
     "proteinas": "Frango assado",
     "acompanhamentos": "Arroz refogado/Arroz integral, Feijão Carioca, Farofa de alho / Cuscuz com ovo cozido",
     "suco": "goiaba",
@@ -38,7 +40,7 @@ module.exports = async (msg) => {
   }
 
 
-  let message = `*Cardápio do RU*\n*Com base no Stories do Instagram\n`;
+  let message = `*Cardápio do RU*\n\n*Com base no Stories do Instagram\n\n`;
 
   Object.entries(menu).forEach(([meal, types]) => {
     if (meal === "cafe") return;
