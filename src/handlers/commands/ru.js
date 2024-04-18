@@ -1,10 +1,10 @@
-const foods =  require('../../util/foods');
+const foods = require("../../util/foods");
 
 function getRandomFood() {
-  const {proteins, sideDishes, sauces, desserts} = foods;
+  const { proteins, sideDishes, sauces, desserts } = foods;
 
   const protein = proteins[Math.floor(Math.random() * proteins.length)];
-  const sauce = sauces[Math.floor(Math.random() * sauces.length)]
+  const sauce = sauces[Math.floor(Math.random() * sauces.length)];
   const sideDish = sideDishes[Math.floor(Math.random() * sideDishes.length)];
   const dessert = desserts[Math.floor(Math.random() * desserts.length)];
 
@@ -17,7 +17,7 @@ function getRandomFood() {
 }
 
 module.exports = async (msg) => {
-  const { ruCardapio } = global.appContext;
+  // const { ruCardapio } = global.appContext;
 
   // if (!ruCardapio || !ruCardapio.length || !ruCardapio.almoco && !ruCardapio.jantar) {
   //   const { protein: proteinAlmoco, sideDish: sideDishAlmoco, sauce: sauceAlmoco, dessert: dessertAlmoco } = getRandomFood();
@@ -28,21 +28,25 @@ module.exports = async (msg) => {
   //   );
   //   return;
   // }
-  const menu = JSON.parse(ruCardapio);
+  const menu = {};
 
   menu["almoco"] = {
-    "proteinas": "Frango assado",
-    "acompanhamentos": "Arroz refogado/Arroz integral, Feijão Carioca, Farofa de alho / Cuscuz com ovo cozido",
-    "suco": "goiaba",
-    "vegetariano": "Soja refogada com legumes",
-  }
+    proteinas: "Frango assado",
+    acompanhamentos:
+      "Arroz refogado/Arroz integral, Feijão Carioca, Farofa de alho / Cuscuz com ovo cozido",
+    suco: "goiaba",
+    vegetariano: "Soja refogada com legumes",
+  };
   menu["jantar"] = {
-    "proteinas": "Carne moída, frango à passarinha e hamburguer ao molho de tomate",
-    "acompanhamentos": "Sopa de feijão (contém glúten), Cuscuz c/ verduras OU arroz refogado, pão/torradinha, arroz integral, banana ou melancia ou maçã",
-    "suco": "goiaba",
-    "vegetariano": "Almôndega de soja ao m. (Contém glúten e lactose) e soja c/ legumes",
-  }
-  
+    proteinas:
+      "Carne moída, frango à passarinha e hamburguer ao molho de tomate",
+    acompanhamentos:
+      "Sopa de feijão (contém glúten), Cuscuz c/ verduras OU arroz refogado, pão/torradinha, arroz integral, banana ou melancia ou maçã",
+    suco: "goiaba",
+    vegetariano:
+      "Almôndega de soja ao m. (Contém glúten e lactose) e soja c/ legumes",
+  };
+
   let message = `*Cardápio do RU*\n\n*Com base no Stories do Instagram - 18/04\n\n`;
 
   Object.entries(menu).forEach(([meal, types]) => {
