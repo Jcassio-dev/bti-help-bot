@@ -63,3 +63,5 @@ Para contribuir, faça um fork do repositório, faça suas alterações e envie 
 ## :star: Deixe uma Estrela!
 
 Se você usa e gosta do BTI Help Bot, por favor, considere dar uma estrela ao projeto no GitHub! Isso ajuda a tornar o projeto mais visível para outros usuários e mostra seu apoio. :smile:
+
+_powered by @danluan & @Jcassio-dev_ 
