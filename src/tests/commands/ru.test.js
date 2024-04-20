@@ -24,8 +24,6 @@ describe("ru", () => {
       ),
     };
 
-    console.log(global.appContext.ruCardapio);
-
     const msg = {
       reply: jest.fn(),
     };
