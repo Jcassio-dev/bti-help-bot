@@ -1,12 +1,12 @@
 {
-  "name": "wpp_web_bot",
+  "name": "bti_help_bot",
   "version": "1.0.0",
   "description": "",
   "main": "src/app.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
+    "start": "cross-env NODE_ENV=production node app.js",
+    "dev": "cross-env NODE_ENV=development node app.js",
     "test": "jest"
   },
   "keywords": [],
@@ -22,6 +22,7 @@
     "whatsapp-web.js": "^1.23.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "nodemon": "^3.1.0"
   }
 }
