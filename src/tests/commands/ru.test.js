@@ -1,4 +1,4 @@
-const ru = require("../../handlers/commands/ru"); // Ajuste o caminho conforme necessário
+const ru = require("../../handlers/commands/ru");
 
 describe("ru", () => {
   it("responde com o cardápio do RU", async () => {
