@@ -40,10 +40,10 @@ O projeto está organizado da seguinte maneira:
 - `src/`: Esta é a pasta principal que contém todo o código fonte do bot.
   - `handlers/`: Esta pasta contém os manipuladores de eventos para diferentes tipos de mensagens.
   - `commands/`: Esta pasta contém os comandos que o bot pode executar.
-  - `utils/`: Esta pasta contém funções utilitárias que são usadas em todo o projeto.
+  - `scrappings/`: Esta pasta contém os comandos de scrapping quando o bot é iniciado.
+  - `util/`: Esta pasta contém funções utilitárias que são usadas em todo o projeto.
 - `tests/`: Esta pasta contém todos os testes do projeto.
 - `content/`: Esta pasta contém os arquivos de mídia utilizados no projeto.
-- `.env`: Este arquivo contém as variáveis de ambiente necessárias para executar o bot.
 - `package.json`: Este arquivo contém a lista de dependências do projeto e scripts npm.
 - `README.md`: Este arquivo (o que você está lendo agora) contém a documentação do projeto.
 
