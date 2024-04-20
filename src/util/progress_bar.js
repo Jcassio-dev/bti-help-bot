@@ -1,5 +1,5 @@
 function progressBar(passedDays) {
-  const totalDays = 131;
+  const totalDays = 180;
 
   const percentage = Math.round((passedDays / totalDays) * 100);
 

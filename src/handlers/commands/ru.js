@@ -1,55 +1,23 @@
-const foods = require("../../util/foods");
-
-function getRandomFood() {
-  const { proteins, sideDishes, sauces, desserts } = foods;
-
-  const protein = proteins[Math.floor(Math.random() * proteins.length)];
-  const sauce = sauces[Math.floor(Math.random() * sauces.length)];
-  const sideDish = sideDishes[Math.floor(Math.random() * sideDishes.length)];
-  const dessert = desserts[Math.floor(Math.random() * desserts.length)];
-
-  return {
-    protein,
-    sauce,
-    sideDish,
-    dessert,
-  };
-}
-
 module.exports = async (msg) => {
-  // const { ruCardapio } = global.appContext;
+  if (!global.appContext.ruCardapio) {
+    await msg.reply(
+      `Não foi possível buscar o cardápio do RU. Tente novamente mais tarde.\n`
+    );
+    return;
+  }
 
-  // if (!ruCardapio || !ruCardapio.length || !ruCardapio.almoco && !ruCardapio.jantar) {
-  //   const { protein: proteinAlmoco, sideDish: sideDishAlmoco, sauce: sauceAlmoco, dessert: dessertAlmoco } = getRandomFood();
-  //   const { protein: proteinJantar, sideDish: sideDishJantar, sauce: sauceJantar, dessert: dessertJantar } = getRandomFood();
+  const ruCardapio = JSON.parse(global.appContext.ruCardapio);
 
-  //   await msg.reply(
-  //     `Não foi possível buscar o cardápio do RU. Tente novamente mais tarde.\nMas com base em cálculos sofisticados, *SUPONHO* que será:\n\n*ALMOÇO*\n_Proteína_: ${proteinAlmoco}\n_molho_: ${sauceAlmoco}\n_Acompanhamento_: ${sideDishAlmoco}\n_Sobremesa_: ${dessertAlmoco}\n\n*JANTAR*\n_Proteína_: ${proteinJantar}\n_molho_: ${sauceJantar}\n_Acompanhamento_: ${sideDishJantar}\n_Sobremesa_: ${dessertJantar}`
-  //   );
-  //   return;
-  // }
-  const menu = {};
+  if (!ruCardapio || (!ruCardapio.almoco && !ruCardapio.jantar)) {
+    await msg.reply(
+      `Não foi possível buscar o cardápio do RU. Tente novamente mais tarde.\n`
+    );
+    return;
+  }
 
-  menu["almoco"] = {
-    proteinas: "Frango assado",
-    acompanhamentos:
-      "Arroz refogado/Arroz integral, Feijão Carioca, Farofa de alho / Cuscuz com ovo cozido",
-    suco: "goiaba",
-    vegetariano: "Soja refogada com legumes",
-  };
-  menu["jantar"] = {
-    proteinas:
-      "Carne moída, frango à passarinha e hamburguer ao molho de tomate",
-    acompanhamentos:
-      "Sopa de feijão (contém glúten), Cuscuz c/ verduras OU arroz refogado, pão/torradinha, arroz integral, banana ou melancia ou maçã",
-    suco: "goiaba",
-    vegetariano:
-      "Almôndega de soja ao m. (Contém glúten e lactose) e soja c/ legumes",
-  };
+  let message = `*Cardápio do RU*\n\n`;
 
-  let message = `*Cardápio do RU*\n\n*Com base no Stories do Instagram - 18/04\n\n`;
-
-  Object.entries(menu).forEach(([meal, types]) => {
+  Object.entries(ruCardapio).forEach(([meal, types]) => {
     if (meal === "cafe") return;
     message += `*${meal.toUpperCase()}*\n`;
     Object.entries(types).forEach(([type, items]) => {
