@@ -5,9 +5,17 @@ const fetchJobs = require("./jerimumjobs");
 async function makeScrapping() {
   console.log("Iniciando scrapping...");
 
-  await fetchEditais().then((editais) => (global.appContext.editais = editais));
-  await fetchMenuRU().then((menu) => (global.appContext.ruCardapio = menu));
-  await fetchJobs().then((jobs) => (global.appContext.jobs = jobs));
+  const scrapingPromises = [fetchEditais(), fetchMenuRU(), fetchJobs()];
+
+  const results = await Promise.allSettled(scrapingPromises);
+
+  results.forEach((result, index) => {
+    if (result.status === "fulfilled") {
+      global.appContext[index === 0 ? "editais" : index === 1 ? "ruCardapio" : "jobs"] = result.value;
+    } else {
+      console.error(`Error fetching data for ${index === 0 ? "editais" : index === 1 ? "menuRU" : "jobs"}:`, result.reason);
+    }
+  });
 
   console.log("Scrapping finalizado!");
 }
