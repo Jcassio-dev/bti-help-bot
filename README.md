@@ -4,7 +4,7 @@
 
 BTI Help Bot é um bot criado para ajudar os estudantes do BTI com várias tarefas. 
 
-[Clique aqui para falar com ele](https://wa.me/558486735862?text=!help)
+[Clique aqui para enviar uma mensagem](https://wa.me/558486735862?text=!help)
 
 ## Descrição do Bot
 
