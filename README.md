@@ -4,6 +4,8 @@
 
 BTI Help Bot é um bot criado para ajudar os estudantes do BTI com várias tarefas. 
 
+[Clique aqui para falar com ele](https://wa.me/558486735862?text=!help)
+
 ## Descrição do Bot
 
 O bot é construído usando Node.js e é projetado para ser fácil de usar e extensível. Ele usa uma arquitetura baseada em comandos, o que significa que você pode facilmente adicionar novos comandos ao bot.
