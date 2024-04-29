@@ -34,6 +34,7 @@ Os comandos disponíveis são:
 | `!horarios <matutino or vespertino or noturno>` | Mostra os horários de cada turno |
 | `!jobs` | Mostra as vagas abertas no JerimumJobs |
 | `!ping` | Se o código estiver funcionando, será respondido um pong |
+| `!repo` | Retorna o repositório que o usuário está utilizando | 
 
 ## Estrutura do Projeto
 
