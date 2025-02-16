@@ -19,7 +19,7 @@ wppconnect
     headless: true,
     useChrome: true,
     executablePath:
-      process.env.PUPPETEER_EXECUTABLE_PATH || "/opt/render/.cache/puppeteer",
+      process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   })
   .then((client) => {
