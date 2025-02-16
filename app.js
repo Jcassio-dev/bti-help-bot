@@ -17,7 +17,6 @@ wppconnect
     autoClose: 60000,
     disableSpins: true,
     headless: true,
-    useChrome: true,
     executablePath:
       process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
