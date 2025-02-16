@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "bti_help_bot",
-      script: "./src/app.js",
+      script: "./app.js",
       instances: 1,
       autorestart: true,
       watch: false,
