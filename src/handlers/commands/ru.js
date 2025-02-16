@@ -1,6 +1,7 @@
-module.exports = async (msg) => {
+module.exports = async (msg, client) => {
   if (!global.appContext.ruCardapio) {
-    await msg.reply(
+    await client.sendText(
+      msg.from,
       `Não foi possível buscar o cardápio do RU. Tente novamente mais tarde.\n`
     );
     return;
@@ -9,7 +10,8 @@ module.exports = async (msg) => {
   const ruCardapio = JSON.parse(global.appContext.ruCardapio);
 
   if (!ruCardapio || (!ruCardapio.almoco && !ruCardapio.jantar)) {
-    await msg.reply(
+    await client.sendText(
+      msg.from,
       `Não foi possível buscar o cardápio do RU. Tente novamente mais tarde.\n`
     );
     return;
@@ -26,5 +28,5 @@ module.exports = async (msg) => {
     message += "\n\n";
   });
 
-  await msg.reply(message);
+  await client.sendText(msg.from, message);
 };

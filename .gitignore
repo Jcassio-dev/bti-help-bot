@@ -2,3 +2,5 @@ node_modules/
 .wwebjs_cache/
 wpp_web_bot/
 sessions/
+
+tokens/

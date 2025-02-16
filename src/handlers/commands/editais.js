@@ -1,8 +1,9 @@
-module.exports = async (msg) => {
+module.exports = async (msg, client) => {
   const { editais } = global.appContext;
 
   if (!editais || !editais.length) {
-    await msg.reply(
+    await client.sendText(
+      msg.from,
       "Não foi possível buscar os editais. Tente novamente mais tarde."
     );
     return;
@@ -18,5 +19,5 @@ module.exports = async (msg) => {
     message += "\n";
   });
 
-  await msg.reply(message);
+  await client.sendText(msg.from, message);
 };

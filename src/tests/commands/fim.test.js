@@ -19,7 +19,7 @@ describe("fim", () => {
 
     await fim(msg);
 
-    expect(msg.reply).toHaveBeenCalledWith(
+    expect(client.sendText(msg.from, ).toHaveBeenCalledWith(
       "Faltam 50 palavraAleatoria dias para o fim do semestre\nprogressBar"
     );
   });

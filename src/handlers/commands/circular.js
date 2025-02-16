@@ -1,10 +1,16 @@
-const { MessageMedia } = require('whatsapp-web.js');
+const path = require("path");
 
 module.exports = async (msg, client) => {
-    const chatId = msg.from;
-    
-    const imagePath = './src/content/imgs/horarios-ufrn.jpeg'
-    const image = MessageMedia.fromFilePath(imagePath);
+  const chatId = msg.from;
+  const imagePath = path.resolve(
+    __dirname,
+    "../../content/imgs/horarios-ufrn.jpeg"
+  );
 
-    client.sendMessage(chatId, image, { caption: 'Esses são os horários do circular.' });
-}
+  client.sendImage(
+    chatId,
+    imagePath,
+    "horarios-ufrn.jpeg",
+    "Esses são os horários do circular."
+  );
+};

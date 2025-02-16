@@ -30,7 +30,7 @@ describe("ru", () => {
 
     await ru(msg);
 
-    const replyContent = msg.reply.mock.calls[0][0];
+    const replyContent = client.sendText(msg.from, .mock.calls[0][0];
     expect(replyContent).toContain("*Cardápio do RU*");
     expect(replyContent).toContain("*ALMOCO*");
     expect(replyContent).toContain("*JANTAR*");
@@ -49,7 +49,7 @@ describe("ru", () => {
 
     await ru(msg);
 
-    expect(msg.reply).toHaveBeenCalledWith(
+    expect(client.sendText(msg.from, ).toHaveBeenCalledWith(
       "Não foi possível buscar o cardápio do RU. Tente novamente mais tarde.\n"
     );
   });

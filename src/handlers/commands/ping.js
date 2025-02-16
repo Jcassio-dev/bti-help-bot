@@ -1,3 +1,3 @@
-module.exports = async (msg) => {
-    await msg.reply('Pong!');
-}
+module.exports = async (msg, client) => {
+  await client.sendText(msg.from, "Pong!");
+};
