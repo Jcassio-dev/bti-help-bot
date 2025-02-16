@@ -19,19 +19,13 @@ wppconnect
     headless: true,
     useChrome: true,
     executablePath:
-      "/opt/render/.cache/puppeteer/chrome/linux-123.0.6312.86/chrome-linux64/chrome",
+      process.env.PUPPETEER_EXECUTABLE_PATH || "/opt/render/.cache/puppeteer",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   })
   .then((client) => {
     console.log("Client is ready!");
 
     makeScrapping();
-
-    schedule.scheduleJob("0 30 10 * *", function () {
-      console.log("Enviando mensagem programada...");
-      const chatId = "120363043647004147@g.us";
-      client.sendText(msg.from, chatId, ".:");
-    });
 
     schedule.scheduleJob("0 */5 * * *", function () {
       makeScrapping();
