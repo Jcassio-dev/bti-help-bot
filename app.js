@@ -18,6 +18,8 @@ wppconnect
     disableSpins: true,
     headless: true,
     useChrome: true,
+    executablePath:
+      process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
     browserArgs: ["--no-sandbox"],
   })
   .then((client) => {
