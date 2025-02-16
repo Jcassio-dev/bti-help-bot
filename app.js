@@ -19,8 +19,8 @@ wppconnect
     headless: true,
     useChrome: true,
     executablePath:
-      process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
-    browserArgs: ["--no-sandbox"],
+      "/opt/render/.cache/puppeteer/chrome/linux-123.0.6312.86/chrome-linux64/chrome",
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   })
   .then((client) => {
     console.log("Client is ready!");
