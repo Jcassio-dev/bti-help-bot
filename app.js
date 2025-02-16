@@ -1,5 +1,6 @@
 const wppconnect = require("@wppconnect-team/wppconnect");
 const schedule = require("node-schedule");
+const puppeteer = require("puppeteer");
 
 const messageHandler = require("./src/handlers/messageHandler");
 const makeScrapping = require("./src/scrappings");
@@ -18,7 +19,7 @@ wppconnect
     disableSpins: true,
     headless: true,
     executablePath:
-      process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
+      process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   })
   .then((client) => {
