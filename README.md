@@ -2,7 +2,7 @@
 
 ## Sobre
 
-BTI Help Bot é um bot criado para ajudar os estudantes do BTI com várias tarefas. 
+BTI Help Bot é um bot criado para ajudar os estudantes do BTI com várias tarefas.
 
 [Clique aqui para enviar uma mensagem](https://wa.me/558486735862?text=!help)
 
@@ -15,26 +15,25 @@ O bot é construído usando Node.js e é projetado para ser fácil de usar e ext
 1. Clone o repositório
 2. Instale as dependências com `npm install`
 3. Inicie o bot com `npm run dev`
-*Recomendo fortemente o uso de dev quando estiver rodando localmente para evitar ser banido por spam*
+   _Recomendo fortemente o uso de dev quando estiver rodando localmente para evitar ser banido por spam_
 4. Logue com o whatsapp web
 
 ## Wiki dos Comandos
 
 Os comandos disponíveis são:
 
-| Comando | Descrição |
-|---------|-----------|
-| `!ru`   | Mostra o cardápio do RU |
-| `!fim`  | Mostra quantos dias restam até o fim do semestre |
-| `!grade <cc or es or i or n>` | Mostra a grade referente ao ciclo  |
-| `!calendário` | Mostra o calendário acadêmico  |
-| `!circular` | Mostra a tabela com os horários dos circulares |
-| `!editais` | Mostra os editais do metrópole que estão abertos |
-| `!faltas` | Mostra quantas faltas você pode tomar em cada carga horária |
-| `!horarios <matutino or vespertino or noturno>` | Mostra os horários de cada turno |
-| `!jobs` | Mostra as vagas abertas no JerimumJobs |
-| `!ping` | Se o código estiver funcionando, será respondido um pong |
-| `!repo` | Retorna o repositório que o usuário está utilizando | 
+| Comando                                         | Descrição                                                   |
+| ----------------------------------------------- | ----------------------------------------------------------- |
+| `!ru`                                           | Mostra o cardápio do RU                                     |
+| `!grade <cc or es or i or n>`                   | Mostra a grade referente ao ciclo                           |
+| `!calendário`                                   | Mostra o calendário acadêmico                               |
+| `!circular`                                     | Mostra a tabela com os horários dos circulares              |
+| `!editais`                                      | Mostra os editais do metrópole que estão abertos            |
+| `!faltas`                                       | Mostra quantas faltas você pode tomar em cada carga horária |
+| `!horarios <matutino or vespertino or noturno>` | Mostra os horários de cada turno                            |
+| `!jobs`                                         | Mostra as vagas abertas no JerimumJobs                      |
+| `!ping`                                         | Se o código estiver funcionando, será respondido um pong    |
+| `!repo`                                         | Retorna o repositório que o usuário está utilizando         |
 
 ## Estrutura do Projeto
 
@@ -66,4 +65,3 @@ Para contribuir, faça um fork do repositório, faça suas alterações e envie 
 ## :star: Deixe uma Estrela!
 
 Se você usa e gosta do BTI Help Bot, por favor, considere dar uma estrela ao projeto no GitHub! Isso ajuda a tornar o projeto mais visível para outros usuários e mostra seu apoio. :smile:
-
