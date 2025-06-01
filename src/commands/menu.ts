@@ -20,7 +20,7 @@ const menuCommand: Command = {
 
     const uniqueCommands = new Set<Command>(allCommands.values());
 
-    for (const cmd of uniqueCommands) {
+    for (const cmd of Array.from(uniqueCommands)) {
       if (cmd.name === "menu") continue;
       menuText += `• *!${cmd.name}*: ${cmd.description || "Sem descrição."}\n`;
     }

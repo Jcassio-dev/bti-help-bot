@@ -1,6 +1,6 @@
 import { AnyMessageContent, WAMessage, WASocket } from "baileys";
-import fs from "fs";
-import path from "path";
+import * as fs from "fs";
+import * as path from "path";
 import { Command } from "../types/command";
 
 const commands = new Map<string, Command>();

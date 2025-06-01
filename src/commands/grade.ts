@@ -1,7 +1,7 @@
 import { WAMessage, WASocket, AnyMessageContent } from "baileys";
 import { Command } from "../types/command";
-import path from "path";
-import fs from "fs";
+import * as path from "path";
+import * as fs from "fs";
 
 interface GradeInfo {
   filename: string;

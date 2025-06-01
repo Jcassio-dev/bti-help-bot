@@ -1,7 +1,7 @@
 import { WAMessage, WASocket, AnyMessageContent } from "baileys";
 import { Command } from "../types/command";
 import axios from "axios";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 
 const SCRAP_CONFIG_EDITAIS = {
   URL: "https://www.metropoledigital.ufrn.br/portal/editais",

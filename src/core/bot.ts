@@ -1,8 +1,8 @@
 import makeWASocket, { DisconnectReason, useMultiFileAuthState } from "baileys";
 import { Boom } from "@hapi/boom";
-import path from "path";
+import * as path from "path";
 import { handleMessages } from "./handlers";
-import qrcode from "qrcode-terminal";
+import * as qrcode from "qrcode-terminal";
 
 export async function connectToWhatsApp() {
   const { state, saveCreds } = await useMultiFileAuthState(
