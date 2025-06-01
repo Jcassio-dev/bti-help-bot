@@ -88,7 +88,7 @@ const editaisCommand: Command = {
   name: "editais",
   description: "Lista editais do portal Metrópole Digital.",
   aliases: ["bolsas", "metropole"],
-  privateRestricted: false,
+  privateRestricted: true,
   execute: async (
     sock: WASocket,
     msg: WAMessage,

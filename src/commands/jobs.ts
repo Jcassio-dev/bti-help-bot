@@ -84,7 +84,7 @@ const jerimumCommand: Command = {
   name: "jobs",
   description: "Lista vagas de emprego do Jerimum Jobs.",
   aliases: ["jerimum", "vagas", "jerimumjobs"],
-  privateRestricted: false,
+  privateRestricted: true,
   execute: async (
     sock: WASocket,
     msg: WAMessage,
