@@ -39,17 +39,51 @@ Os comandos disponíveis são:
 
 O projeto está organizado da seguinte maneira:
 
-- `src/`: Esta é a pasta principal que contém todo o código fonte do bot.
-  - `handlers/`: Esta pasta contém os manipuladores de eventos para diferentes tipos de mensagens.
-  - `commands/`: Esta pasta contém os comandos que o bot pode executar.
-  - `scrappings/`: Esta pasta contém os comandos de scrapping quando o bot é iniciado.
-  - `util/`: Esta pasta contém funções utilitárias que são usadas em todo o projeto.
-- `tests/`: Esta pasta contém todos os testes do projeto.
-- `content/`: Esta pasta contém os arquivos de mídia utilizados no projeto.
-- `package.json`: Este arquivo contém a lista de dependências do projeto e scripts npm.
-- `README.md`: Este arquivo (o que você está lendo agora) contém a documentação do projeto.
-
-Cada pasta contém um arquivo `index.js` que exporta todas as funções daquela pasta. Isso facilita a importação de funções de diferentes partes do projeto.
+```
+bti-help-bot/
+├── src/
+│   ├── commands/
+│   │   ├── calendario.ts
+│   │   ├── circular.ts
+│   │   ├── editais.ts
+│   │   ├── faltas.ts
+│   │   ├── grade.ts
+│   │   ├── horarios.ts
+│   │   ├── jobs.ts
+│   │   ├── menu.ts
+│   │   ├── ping.ts
+│   │   └── repositorio.ts
+│   ├── core/
+│   │   ├── bot.ts
+│   │   └── handlers.ts
+│   ├── resources/
+│   │   ├── docs/
+│   │   │   └── calendario2025.pdf
+│   │   └── imgs/
+│   │       ├── grade-cc.jpeg
+│   │       ├── grade-es.jpeg
+│   │       ├── grade-geral-i.jpeg
+│   │       ├── grade-geral.jpeg
+│   │       └── horarios-ufrn.jpeg
+│   ├── types/
+│   │   └── command.ts
+│   └── index.ts
+├── content/      <-- (Se você moveu 'resources' para 'content' como nos comandos recentes)
+│   ├── docs/
+│   │   └── calendario2025.pdf
+│   └── imgs/
+│       ├── grade-cc.jpeg
+│       ├── grade-es.jpeg
+│       ├── grade-geral-i.jpeg
+│       ├── grade-geral.jpeg
+│       └── horarios-ufrn.jpeg
+├── node_modules/
+├── .env            (Exemplo, se você usar)
+├── .gitignore
+├── package.json
+├── tsconfig.json
+└── README.md
+```
 
 ## Como Contribuir
 
