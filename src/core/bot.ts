@@ -16,6 +16,7 @@ export async function connectToWhatsApp() {
     const { connection, lastDisconnect, qr } = update;
     if (qr) {
       console.log("QR Code recebido, escaneie por favor:");
+      console.log("QR Code String", qr);
       qrcode.generate(qr, { small: true });
     }
     if (connection === "close") {
