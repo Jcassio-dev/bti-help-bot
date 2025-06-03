@@ -3,13 +3,16 @@ import { Boom } from "@hapi/boom";
 import * as path from "path";
 import { handleMessages } from "./handlers";
 import * as qrcode from "qrcode-terminal";
-
+import P from "pino";
 export async function connectToWhatsApp() {
   const { state, saveCreds } = await useMultiFileAuthState(
     path.resolve(__dirname, "..", "..", "auth_info_baileys")
   );
   const sock = makeWASocket({
     auth: state,
+    logger: P({
+      level: "info",
+    }),
   });
 
   sock.ev.on("connection.update", (update) => {
