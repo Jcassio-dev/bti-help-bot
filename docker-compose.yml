@@ -8,6 +8,8 @@ services:
 
     restart: unless-stopped
 
+    user: root
+
     volumes:
       - bti-bot-session-volume:/usr/src/app/bti-bot-session
 
