@@ -14,3 +14,7 @@ services:
     environment:
       - API_BASE_URL=${API_BASE_URL}
       - API_SECRET_KEY=${API_SECRET_KEY}
+
+volumes:
+  bti-bot-session-volume:
+    driver: local
