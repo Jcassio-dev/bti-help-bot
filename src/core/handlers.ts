@@ -76,7 +76,7 @@ export async function handleMessages(sock: WASocket) {
       !!msg.key.participant && msg.key.remoteJid?.endsWith("@g.us");
 
     registerLog({
-      commandName,
+      command: commandName,
       userId: msg.key.participant || msg.key.remoteJid,
       groupId: isGroupMessage ? msg.key.remoteJid : null,
     });

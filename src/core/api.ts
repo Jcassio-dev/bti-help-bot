@@ -10,22 +10,20 @@ const client = axios.create({
 });
 
 export async function registerLog({
-  commandName,
+  command,
   userId,
   groupId,
 }: ICreateLogDTO): Promise<void> {
   try {
     const payload = {
-      commandName,
+      command,
       userId,
       groupId,
     };
 
     await client.post("/api/logs/command", payload);
 
-    console.log(
-      `[LOG] Comando '${commandName}' registrado com sucesso na API.`
-    );
+    console.log(`[LOG] Comando '${command}' registrado com sucesso na API.`);
   } catch (error) {
     console.error("[LOG] Falha ao registrar comando na API:", error.message);
   }

@@ -1,5 +1,5 @@
 export interface ICreateLogDTO {
-  commandName: string;
+  command: string;
   userId: string;
   groupId: string | null;
 }
