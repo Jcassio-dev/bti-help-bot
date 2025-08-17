@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  bot:
+    container_name: bti_bot
+
+    build: .
+
+    restart: unless-stopped
+
+    volumes:
+      - bti-bot-session-volume:/usr/src/app/bti-bot-session
+
+    environment:
+      - API_BASE_URL=${API_BASE_URL}
+      - API_SECRET_KEY=${API_SECRET_KEY}
