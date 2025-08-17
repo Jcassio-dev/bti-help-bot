@@ -2,6 +2,7 @@ import { AnyMessageContent, WAMessage, WASocket } from "baileys";
 import * as fs from "fs";
 import * as path from "path";
 import { Command } from "../types/command";
+import { registerLog } from "./api";
 
 const commands = new Map<string, Command>();
 const commandPrefix = "!";
@@ -73,6 +74,12 @@ export async function handleMessages(sock: WASocket) {
     let finalReplyToJid: string | undefined | null;
     const isGroupMessage =
       !!msg.key.participant && msg.key.remoteJid?.endsWith("@g.us");
+
+    registerLog({
+      commandName,
+      userId: msg.key.participant || msg.key.remoteJid,
+      groupId: isGroupMessage ? msg.key.remoteJid : null,
+    });
 
     if (isGroupMessage) {
       if (command.privateRestricted === false) {
