@@ -41,10 +41,27 @@ export async function handleMessages(sock: WASocket) {
 
   sock.ev.on("messages.upsert", async (m) => {
     const msg = m.messages[0];
+
     if (!msg.message || msg.key.fromMe) return;
+
+    if (msg.message.ephemeralMessage) {
+      msg.message = msg.message.ephemeralMessage.message;
+    }
+
+    if (
+      !msg.message.conversation &&
+      !msg.message.extendedTextMessage?.text &&
+      !msg.message.imageMessage &&
+      !msg.message.videoMessage &&
+      !msg.message.documentMessage
+    ) {
+      console.warn("Mensagem ignorada: tipo não suportado ou vazio.", msg);
+      return;
+    }
 
     const messageContent =
       msg.message.conversation || msg.message.extendedTextMessage?.text;
+
     if (!messageContent || !messageContent.startsWith(commandPrefix)) return;
 
     const args = messageContent.slice(commandPrefix.length).trim().split(/ +/);
