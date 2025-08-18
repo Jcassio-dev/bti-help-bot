@@ -52,4 +52,6 @@ COPY --from=builder --chown=node:node /usr/src/app/node_modules ./node_modules
 COPY --from=builder --chown=node:node /usr/src/app/dist ./dist
 COPY --chown=node:node package.json .
 
+COPY --chown=node:node ./src/resources ./dist/resources
+
 CMD [ "npm", "start" ]
