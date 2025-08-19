@@ -4,7 +4,7 @@ import { Command } from "../types/command";
 const usoCommand: Command = {
   name: "uso",
   description:
-    "Faz uma requisição no servidor e ver quantos comandos você já usou.",
+    "Faz uma requisição no servidor e vê quantos comandos você já usou.",
   aliases: ["eu", "chamadas"],
   privateRestricted: true,
   execute: async (sock, msg, args) => {
