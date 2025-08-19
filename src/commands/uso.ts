@@ -1,0 +1,33 @@
+import axios from "axios";
+import { Command } from "../types/command";
+
+const usoCommand: Command = {
+  name: "uso",
+  description:
+    "Faz uma requisição no servidor e ver quantos comandos você já usou.",
+  aliases: ["eu", "chamadas"],
+  privateRestricted: true,
+  execute: async (sock, msg, args) => {
+    const userId = msg.key.participant || msg.key.remoteJid;
+    const apiUrl = process.env.API_BASE_URL || "http://localhost:3000";
+
+    if (!userId) return "Não foi possível identificar o usuário.";
+
+    try {
+      const {
+        data: { count: commandCount },
+      } = await axios.get(`${apiUrl}/api/logs/user-command-count`, {
+        params: {
+          userId,
+        },
+      });
+      return `Você já enviou ${commandCount} comandos.`;
+    } catch (error) {
+      console.error("Erro ao buscar contagem de comandos:", error);
+      return "Ocorreu um erro ao buscar sua contagem de comandos.";
+    }
+  },
+  loggable: false,
+};
+
+export default usoCommand;
