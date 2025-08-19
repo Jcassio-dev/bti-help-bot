@@ -92,11 +92,13 @@ export async function handleMessages(sock: WASocket) {
     const isGroupMessage =
       !!msg.key.participant && msg.key.remoteJid?.endsWith("@g.us");
 
-    registerLog({
-      command: commandName,
-      userId: msg.key.participant || msg.key.remoteJid,
-      groupId: isGroupMessage ? msg.key.remoteJid : null,
-    });
+    if (command.loggable) {
+      registerLog({
+        command: commandName,
+        userId: msg.key.participant || msg.key.remoteJid,
+        groupId: isGroupMessage ? msg.key.remoteJid : null,
+      });
+    }
 
     if (isGroupMessage) {
       if (command.privateRestricted === false) {

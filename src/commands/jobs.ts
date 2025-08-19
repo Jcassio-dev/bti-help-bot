@@ -133,6 +133,7 @@ const jerimumCommand: Command = {
 
     return responseText;
   },
+  loggable: true,
 };
 
 export default jerimumCommand;

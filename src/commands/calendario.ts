@@ -41,6 +41,7 @@ const calendarioCommand: Command = {
       return "Desculpe, ocorreu um erro ao tentar enviar o calendário. Por favor, tente novamente mais tarde.";
     }
   },
+  loggable: true,
 };
 
 export default calendarioCommand;

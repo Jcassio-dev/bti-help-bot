@@ -137,6 +137,7 @@ const editaisCommand: Command = {
 
     return responseText;
   },
+  loggable: true,
 };
 
 export default editaisCommand;

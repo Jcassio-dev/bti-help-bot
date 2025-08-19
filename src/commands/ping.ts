@@ -7,6 +7,7 @@ const pingCommand: Command = {
   aliases: ["p"],
   execute: async () => "Pong!",
   privateRestricted: false,
+  loggable: true,
 };
 
 export default pingCommand;

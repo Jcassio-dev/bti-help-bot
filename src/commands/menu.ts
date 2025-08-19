@@ -34,6 +34,7 @@ const menuCommand: Command = {
 
     return menuText;
   },
+  loggable: true,
 };
 
 export default menuCommand;

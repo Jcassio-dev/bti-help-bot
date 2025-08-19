@@ -79,6 +79,7 @@ const gradeCommand: Command = {
       return `Ocorreu um erro ao tentar enviar a imagem da grade "${type}".`;
     }
   },
+  loggable: true,
 };
 
 export default gradeCommand;

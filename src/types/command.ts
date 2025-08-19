@@ -12,4 +12,5 @@ export interface Command {
   ) => Promise<AnyMessageContent | string | null | undefined>;
   adminOnly?: boolean;
   privateRestricted?: boolean;
+  loggable?: boolean;
 }

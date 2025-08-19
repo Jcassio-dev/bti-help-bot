@@ -19,6 +19,7 @@ const absenceCommand: Command = {
 
     return message;
   },
+  loggable: true,
 };
 
 export default absenceCommand;

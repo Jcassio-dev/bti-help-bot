@@ -60,6 +60,7 @@ const horariosCommand: Command = {
 
     return message;
   },
+  loggable: true,
 };
 
 export default horariosCommand;

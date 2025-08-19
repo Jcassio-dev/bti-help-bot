@@ -8,6 +8,7 @@ const pingCommand: Command = {
   privateRestricted: false,
   execute: async () =>
     "Você pode encontrar e colaborar com o meu código no seguinte repositório:\nhttps://github.com/Jcassio-dev/bti-help-bot",
+  loggable: true,
 };
 
 export default pingCommand;

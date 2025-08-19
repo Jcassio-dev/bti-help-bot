@@ -42,6 +42,7 @@ const circularCommand: Command = {
       return "Ocorreu um erro ao tentar enviar a imagem dos horários do circular.";
     }
   },
+  loggable: true,
 };
 
 export default circularCommand;
