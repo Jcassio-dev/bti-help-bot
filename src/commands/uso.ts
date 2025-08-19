@@ -14,14 +14,15 @@ const usoCommand: Command = {
     if (!userId) return "Não foi possível identificar o usuário.";
 
     try {
-      const {
-        data: { count: commandCount },
-      } = await axios.get(`${apiUrl}/api/logs/user-command-count`, {
-        params: {
-          userId,
-        },
-      });
-      return `Você já enviou ${commandCount} comandos.`;
+      const { data: commandCount } = await axios.get(
+        `${apiUrl}/api/logs/user-command-count`,
+        {
+          params: {
+            userId,
+          },
+        }
+      );
+      return `Você já enviou ${commandCount} comandos.\n\n _OBS.: desde 17/08/2025 :D_`;
     } catch (error) {
       console.error("Erro ao buscar contagem de comandos:", error);
       return "Ocorreu um erro ao buscar sua contagem de comandos.";
