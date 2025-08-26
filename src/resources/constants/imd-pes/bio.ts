@@ -1,0 +1,87 @@
+export const bio = [
+  {
+    "cod": "ICE1024",
+    "name": "Fundamentos de Bioinformática",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0605",
+    "name": "Seminários de Bioinformática",
+    "ch": 30
+  },
+  {
+    "cod": "DBQ0048",
+    "name": "Fundamentos de Bioquímica e Biologia Molecular",
+    "ch": 90
+  },
+  {
+    "cod": "ICE1047",
+    "name": "Fundamentos de Genética e Evolução",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0609",
+    "name": "Programação para Bioinformática",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0607",
+    "name": "Modelagem e Simulação Computacional",
+    "ch": 60
+  },
+  {
+    "cod": "DBQ0044",
+    "name": "Introdução a Biologia de Sistemas",
+    "ch": 60
+  },
+  {
+    "cod": "DBQ0050",
+    "name": "Bioinformática Estrutural",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0601",
+    "name": "Bioestatística",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0610",
+    "name": "Métodos de Bioinformática para Análise de Sequências Biológicas",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0611",
+    "name": "Aprendizado de Máquina em Bioinformática",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0260",
+    "name": "Tópicos Especiais em Bioinformática “A”",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0261",
+    "name": "Tópicos Especiais em Bioinformática “B”",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0262",
+    "name": "Tópicos Especiais em Bioinformática “C”",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0263",
+    "name": "Tópicos Especiais em Bioinformática “D”",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0264",
+    "name": "Tópicos Especiais em Bioinformática “E”",
+    "ch": 60
+  },
+  {
+    "cod": "IMD0265",
+    "name": "Tópicos Especiais em Bioinformática “F”",
+    "ch": 60
+  }
+]
