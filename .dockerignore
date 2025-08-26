@@ -5,6 +5,6 @@ Dockerfile
 .git
 .gitignore
 README.md
-dist
+dist/
 auth_info_baileys
 *.env
