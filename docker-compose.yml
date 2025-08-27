@@ -11,7 +11,7 @@ services:
     user: root
 
     volumes:
-      - bti-bot-session-volume:/usr/src/app/bti-bot-session
+      - bti-bot-session-volume:/usr/src/app/auth_info_baileys
 
     environment:
       - API_BASE_URL=${API_BASE_URL}
