@@ -27,9 +27,6 @@ const pesCommand: Command = {
 
     const message = `
 *PES DE ${fullName}*
-total de matérias: ${courses.length} (${courses
-      .map((course) => course.ch)
-      .reduce((a, b) => a + b, 0)}h)
 
 ${courses
   .map((course) => `[${course.cod}] - ${course.name} (${course.ch}h)`)
