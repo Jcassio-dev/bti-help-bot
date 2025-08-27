@@ -1,9 +1,11 @@
 import { WAMessage, WASocket } from "baileys";
 import { Command } from "../types/command";
+import { pesFields } from "../resources/constants/imd-pes";
 
 const pesCommand: Command = {
   name: "pes",
-  description: "Informa a grade necessária para conseguir o certificado de cada PES.",
+  description:
+    "Informa a grade necessária para conseguir o certificado de cada PES.",
   aliases: [],
   privateRestricted: false,
   execute: async (
@@ -11,25 +13,26 @@ const pesCommand: Command = {
     msg: WAMessage,
     args: string[]
   ): Promise<string | null | undefined> => {
-    const turns = {
-      iot:  [
-         
-        ],
-       
-    };
+    const pes = (args[0]?.toLowerCase() as keyof typeof pesFields) || "";
 
-    const type = (args[0]?.toLowerCase() as keyof typeof turns) || "";
-
-    if (!type || !turns[type]) {
-      return `Tente: !horarios <nome-do-turno>\nDisponíveis:\n${Object.keys(
-        turns
-      ).join("\n")}`;
+    if (!pes || !pesFields[pes]) {
+      return `Tente: !horarios <nome-do-turno>\nDisponíveis:\n${Object.entries(
+        pesFields
+      )
+        .map(([key, value]) => `${key} (${value.fullName})`)
+        .join("\n")}`;
     }
 
-    const { schedules, letter } = turns[type];
-    const message = schedules.reduce((acc, curr, index) => {
-      return acc + `(${letter}${index + 1}) ${curr}\n`;
-    }, `*${type}*\n`);
+    const { fullName, courses } = pesFields[pes];
+
+    const message = `
+    *PES DE ${fullName}*
+
+    ${courses
+      .map((course) => `[${course.cod}] - ${course.name} (${course.ch}h)`)
+      .join("\n")}
+
+    `;
 
     return message;
   },
