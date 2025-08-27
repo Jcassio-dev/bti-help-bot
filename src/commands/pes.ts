@@ -16,10 +16,10 @@ const pesCommand: Command = {
     const pes = (args[0]?.toLowerCase() as keyof typeof pesFields) || "";
 
     if (!pes || !pesFields[pes]) {
-      return `Tente: !horarios <nome-do-turno>\nDisponíveis:\n${Object.entries(
+      return `Tente: !pes <nome-do-pes>\nDisponíveis:\n${Object.entries(
         pesFields
       )
-        .map(([key, value]) => `${key} (${value.fullName})`)
+        .map(([key, value]) => `- ${key} | ${value.fullName}`)
         .join("\n")}`;
     }
 
