@@ -23,12 +23,22 @@ const pesCommand: Command = {
         .join("\n")}`;
     }
 
-    const { fullName, courses } = pesFields[pes];
+    const { fullName, courses, chMin } = pesFields[pes];
+
+    const optativeCourses = courses.filter((c) => c.optative);
+    const mandatoryCourses = courses.filter((c) => !c.optative);
 
     const message = `
 *PES DE ${fullName}*
+Carga horária mínima: ${chMin}h
 
-${courses
+Matérias obrigatórias--------------------------
+${mandatoryCourses
+  .map((course) => `[${course.cod}] - ${course.name} (${course.ch}h)`)
+  .join("\n")}
+
+Matérias optativas--------------------------
+${optativeCourses
   .map((course) => `[${course.cod}] - ${course.name} (${course.ch}h)`)
   .join("\n")}
 
