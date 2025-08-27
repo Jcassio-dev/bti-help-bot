@@ -7,7 +7,7 @@ const pesCommand: Command = {
   description:
     "Informa a grade necessária para conseguir o certificado de cada PES.",
   aliases: [],
-  privateRestricted: false,
+  privateRestricted: true,
   execute: async (
     sock: WASocket,
     msg: WAMessage,
@@ -20,7 +20,10 @@ const pesCommand: Command = {
         pesFields
       )
         .map(([key, value]) => `- ${key} | ${value.fullName}`)
-        .join("\n")}`;
+        .join("\n")}
+
+      fonte:<https://hongkong.imd.ufrn.br/filemanagerportal/source/RESOLUCAO_N_041_2025_PES-IMD.pdf>
+      `;
     }
 
     const { fullName, courses, chMin } = pesFields[pes];
@@ -37,11 +40,12 @@ ${mandatoryCourses
   .map((course) => `[${course.cod}] - ${course.name} (${course.ch}h)`)
   .join("\n")}
 
-Matérias optativas--------------------------
+Matérias optativas-----------------------------
 ${optativeCourses
   .map((course) => `[${course.cod}] - ${course.name} (${course.ch}h)`)
   .join("\n")}
 
+fonte:<https://hongkong.imd.ufrn.br/filemanagerportal/source/RESOLUCAO_N_041_2025_PES-IMD.pdf>
     `;
 
     return message;
