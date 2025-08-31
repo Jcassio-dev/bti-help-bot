@@ -5,6 +5,7 @@ const secretariaCommand: Command = {
   name: "secretaria",
   description: "Envia o contato da secretaria.",
   aliases: [],
+  privateRestricted: false,
   execute: async (
     sock: WASocket,
     msg: WAMessage,
