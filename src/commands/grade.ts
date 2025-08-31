@@ -25,6 +25,10 @@ const grades: Record<string, GradeInfo> = {
     filename: "grade-es.jpeg",
     caption: "Essa é a grade da ênfase em Engenharia de Software.",
   },
+  bia: {
+    filename: "grade-bia.jpeg",
+    caption: "Essa é a grade da ênfase em Inteligência Artificial.",
+  },
 };
 
 const gradeCommand: Command = {
