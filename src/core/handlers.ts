@@ -94,7 +94,7 @@ export async function handleMessages(sock: WASocket) {
 
     if (command.loggable) {
       registerLog({
-        command: commandName,
+        command: command.name,
         userId: msg.key.participant || msg.key.remoteJid,
         groupId: isGroupMessage ? msg.key.remoteJid : null,
       });
