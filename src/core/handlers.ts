@@ -76,7 +76,11 @@ export async function handleMessages(sock: WASocket) {
       if (defaultReplyToJid) {
         await sock.sendMessage(
           defaultReplyToJid,
-          { text: "Comando não encontrado." },
+          {
+            text: `Comando não encontrado. 
+${commands.get("menu")}
+            `,
+          },
           { quoted: msg }
         );
       } else {
