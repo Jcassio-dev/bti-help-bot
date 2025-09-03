@@ -5,7 +5,7 @@ import * as fs from "fs";
 
 const calendarioCommand: Command = {
   name: "calendario",
-  description: "Envia a imagem dos horários do circular.",
+  description: "Envia o arquivo do calendário acadêmico.",
   aliases: ["cal", "acad"],
   privateRestricted: false,
   execute: async (
