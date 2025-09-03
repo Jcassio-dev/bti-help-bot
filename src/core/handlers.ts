@@ -74,9 +74,14 @@ export async function handleMessages(sock: WASocket) {
     if (!command) {
       const defaultReplyToJid = msg.key.participant || msg.key.remoteJid;
       if (defaultReplyToJid) {
-        const menuMessageContent = await commands
-          .get("menu")
-          .execute(sock, msg, args);
+        const menuCommand = commands.get("menu");
+
+        const menuMessageContent = await menuCommand.execute(
+          sock,
+          msg,
+          args,
+          commands
+        );
 
         await sock.sendMessage(
           defaultReplyToJid,
