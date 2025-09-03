@@ -74,11 +74,15 @@ export async function handleMessages(sock: WASocket) {
     if (!command) {
       const defaultReplyToJid = msg.key.participant || msg.key.remoteJid;
       if (defaultReplyToJid) {
+        const menuMessageContent = await commands
+          .get("menu")
+          .execute(sock, msg, args);
+
         await sock.sendMessage(
           defaultReplyToJid,
           {
             text: `Comando não encontrado. 
-${commands.get("menu").execute(sock, msg, args)}
+${menuMessageContent}
             `,
           },
           { quoted: msg }
