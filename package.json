@@ -15,7 +15,7 @@
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "axios": "^1.9.0",
-    "baileys": "^6.7.18",
+    "baileys": "^7.0.0-rc.6",
     "cheerio": "^1.0.0",
     "nodemon": "^3.1.10",
     "qrcode-terminal": "^0.12.0",
