@@ -5,9 +5,12 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "build": "tsc",
+    "build": "tsc && cp -r src/resources dist/",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pm2:start": "pm2 start dist/index.js --name bti-bot",
+    "pm2:stop": "pm2 stop bti-bot",
+    "pm2:restart": "pm2 restart bti-bot",
+    "pm2:logs": "pm2 logs bti-bot"
   },
   "keywords": [],
   "author": "",
