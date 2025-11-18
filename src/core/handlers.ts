@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { Command } from "../types/command";
 import { registerLog } from "./api";
+import { checkCooldown, setCooldown } from "./cooldown";
 
 const commands = new Map<string, Command>();
 const commandPrefix = "!";
@@ -100,6 +101,19 @@ ${menuMessageContent}
       }
       return;
     }
+
+    const userId = msg.key.participant || msg.key.remoteJid;
+    if (!userId) {
+      console.error("Não foi possível identificar o usuário para o cooldown.");
+      return;
+    }
+
+    const timeLeft = checkCooldown(userId, command.name);
+    if (timeLeft > 0) {
+      return;
+    }
+
+    setCooldown(userId, command.name);
 
     let finalReplyToJid: string | undefined | null;
     const isGroupMessage =
