@@ -108,12 +108,13 @@ ${menuMessageContent}
       return;
     }
 
-    const timeLeft = checkCooldown(userId, command.name);
+    const subCommand = args[0]?.toLowerCase();
+    const timeLeft = checkCooldown(userId, command.name, subCommand);
     if (timeLeft > 0) {
       return;
     }
 
-    setCooldown(userId, command.name);
+    setCooldown(userId, command.name, subCommand);
 
     let finalReplyToJid: string | undefined | null;
     const isGroupMessage =

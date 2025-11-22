@@ -1,12 +1,22 @@
 const cooldowns = new Map<string, number>();
 const COOLDOWN_SECONDS = 30;
 
-function getCooldownKey(userId: string, commandName: string): string {
-  return `${userId}:${commandName}`;
+function getCooldownKey(
+  userId: string,
+  commandName: string,
+  subCommand?: string
+): string {
+  return subCommand
+    ? `${userId}:${commandName}:${subCommand}`
+    : `${userId}:${commandName}`;
 }
 
-export function checkCooldown(userId: string, commandName: string): number {
-  const cooldownKey = getCooldownKey(userId, commandName);
+export function checkCooldown(
+  userId: string,
+  commandName: string,
+  subCommand?: string
+): number {
+  const cooldownKey = getCooldownKey(userId, commandName, subCommand);
   const expirationTime = cooldowns.get(cooldownKey);
 
   if (expirationTime && Date.now() < expirationTime) {
@@ -17,8 +27,12 @@ export function checkCooldown(userId: string, commandName: string): number {
   return 0;
 }
 
-export function setCooldown(userId: string, commandName: string): void {
-  const cooldownKey = getCooldownKey(userId, commandName);
+export function setCooldown(
+  userId: string,
+  commandName: string,
+  subCommand?: string
+): void {
+  const cooldownKey = getCooldownKey(userId, commandName, subCommand);
   const expirationTime = Date.now() + COOLDOWN_SECONDS * 1000;
   cooldowns.set(cooldownKey, expirationTime);
 }
