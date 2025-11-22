@@ -1,13 +1,19 @@
-import { WAMessage, WASocket } from "baileys";
-import { Command } from "../types/command";
+import { AnyMessageContent, WAMessage, WASocket } from "baileys";
+import { BaseCommand } from "../types/command";
 
-const pingCommand: Command = {
-  name: "ping",
-  description: "Responde com Pong!",
-  aliases: ["p"],
-  execute: async () => "Pong!",
-  privateRestricted: false,
-  loggable: false,
-};
+export default class PingCommand extends BaseCommand {
+  name = "ping";
+  description = "Responde com Pong!";
+  aliases = ["p"];
+  privateRestricted = false;
+  loggable = false;
 
-export default pingCommand;
+  async execute(
+    _sock: WASocket,
+    _msg: WAMessage,
+    _args: string[],
+    _allCommands?: Map<string, BaseCommand>
+  ): Promise<AnyMessageContent | string | null | undefined> {
+    return "Pong!";
+  }
+}

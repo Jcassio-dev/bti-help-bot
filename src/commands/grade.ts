@@ -1,5 +1,5 @@
 import { WAMessage, WASocket, AnyMessageContent } from "baileys";
-import { Command } from "../types/command";
+import { BaseCommand } from "../types/command";
 import * as path from "path";
 import * as fs from "fs";
 
@@ -31,16 +31,19 @@ const grades: Record<string, GradeInfo> = {
   },
 };
 
-const gradeCommand: Command = {
-  name: "grade",
-  description: "Envia a imagem da grade curricular especificada.",
-  aliases: ["grades", "curricular"],
-  privateRestricted: false,
-  execute: async (
-    sock: WASocket,
-    msg: WAMessage,
-    args: string[]
-  ): Promise<AnyMessageContent | string | null | undefined> => {
+export default class GradeCommand extends BaseCommand {
+  name = "grade";
+  description = "Envia a imagem da grade curricular especificada.";
+  aliases = ["grades", "curricular"];
+  privateRestricted = false;
+  loggable = true;
+
+  async execute(
+    _sock: WASocket,
+    _msg: WAMessage,
+    args: string[],
+    _allCommands?: Map<string, BaseCommand>
+  ): Promise<AnyMessageContent | string | null | undefined> {
     const type = args[0]?.toLowerCase();
 
     if (!type || !grades[type]) {
@@ -82,8 +85,5 @@ const gradeCommand: Command = {
       );
       return `Ocorreu um erro ao tentar enviar a imagem da grade "${type}".`;
     }
-  },
-  loggable: true,
-};
-
-export default gradeCommand;
+  }
+}

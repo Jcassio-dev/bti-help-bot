@@ -1,5 +1,5 @@
 import { WAMessage, WASocket, AnyMessageContent } from "baileys";
-import { Command } from "../types/command";
+import { BaseCommand } from "../types/command";
 import axios from "axios";
 
 const SCRAP_CONFIG = {
@@ -80,16 +80,19 @@ async function fetchAllJobs(): Promise<Job[] | null> {
   }
 }
 
-const jerimumCommand: Command = {
-  name: "jobs",
-  description: "Lista vagas de emprego do Jerimum Jobs.",
-  aliases: ["jerimum", "vagas", "jerimumjobs"],
-  privateRestricted: true,
-  execute: async (
-    sock: WASocket,
-    msg: WAMessage,
-    args: string[]
-  ): Promise<AnyMessageContent | string | null | undefined> => {
+export default class JobsCommand extends BaseCommand {
+  name = "jobs";
+  description = "Lista vagas de emprego do Jerimum Jobs.";
+  aliases = ["jerimum", "vagas", "jerimumjobs"];
+  privateRestricted = true;
+  loggable = true;
+
+  async execute(
+    _sock: WASocket,
+    _msg: WAMessage,
+    _args: string[],
+    _allCommands?: Map<string, BaseCommand>
+  ): Promise<AnyMessageContent | string | null | undefined> {
     const now = Date.now();
 
     if (
@@ -132,8 +135,5 @@ const jerimumCommand: Command = {
     }
 
     return responseText;
-  },
-  loggable: true,
-};
-
-export default jerimumCommand;
+  }
+}

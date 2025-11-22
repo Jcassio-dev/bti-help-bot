@@ -1,44 +1,23 @@
 import { AnyMessageContent, WAMessage, WASocket } from "baileys";
-import * as fs from "fs";
-import * as path from "path";
-import { Command } from "../types/command";
-import { registerLog } from "./api";
-import { checkCooldown, setCooldown } from "./cooldown";
+import { ApiService } from "../services/api.service";
+import { CooldownService } from "../services/cooldown.service";
+import { StrategyFactory } from "../factories/strategy.factory";
+import { CommandFactory } from "../factories/command.factory";
+import { parseMessage } from "../utils/message-parser";
+import { UserValidator } from "../utils/user-validator";
+import { validateMessageContext } from "../utils/message-validator";
 
-const commands = new Map<string, Command>();
 const commandPrefix = "!";
 
-async function loadCommands() {
-  const commandsPath = path.join(__dirname, "..", "commands");
-  const commandFiles = fs
-    .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".ts") || file.endsWith(".js"));
+export async function handleMessages(
+  sock: WASocket,
+  apiService: ApiService = new ApiService(),
+  cooldownService: CooldownService = CooldownService.getInstance(),
+  commandFactory: CommandFactory = new CommandFactory()
+) {
+  await commandFactory.loadCommands();
 
-  for (const file of commandFiles) {
-    try {
-      const filePath = path.join(commandsPath, file);
-      const commandModule = await import(filePath);
-      const command: Command = commandModule.default;
-
-      if (command && command.name && typeof command.execute === "function") {
-        commands.set(command.name, command);
-        if (command.aliases) {
-          command.aliases.forEach((alias: string) =>
-            commands.set(alias, command)
-          );
-        }
-        console.log(`Comando carregado: ${command.name}`);
-      } else {
-        console.warn(`Arquivo de comando inválido: ${file}`);
-      }
-    } catch (error) {
-      console.error(`Erro ao carregar comando ${file}:`, error);
-    }
-  }
-}
-
-export async function handleMessages(sock: WASocket) {
-  await loadCommands();
+  const userValidator = new UserValidator(cooldownService);
 
   sock.ev.on("messages.upsert", async (m) => {
     const msg = m.messages[0];
@@ -49,119 +28,82 @@ export async function handleMessages(sock: WASocket) {
       msg.message = msg.message.ephemeralMessage.message;
     }
 
-    if (
-      !msg.message.conversation &&
-      !msg.message.extendedTextMessage?.text &&
-      !msg.message.imageMessage &&
-      !msg.message.videoMessage &&
-      !msg.message.documentMessage
-    ) {
-      console.warn("Mensagem ignorada: tipo não suportado ou vazio.", msg);
-      return;
-    }
-
     const messageContent =
       msg.message.conversation || msg.message.extendedTextMessage?.text;
+    if (!messageContent) return;
 
-    if (!messageContent || !messageContent.startsWith(commandPrefix)) return;
+    const parsed = parseMessage(messageContent);
+    if (!parsed.isCommand || !parsed.commandName) return;
 
-    const args = messageContent.slice(commandPrefix.length).trim().split(/ +/);
-    const commandName = args.shift()?.toLowerCase();
-
-    if (!commandName) return;
-
-    const command = commands.get(commandName);
+    const { commandName, args } = parsed;
+    const command = commandFactory.createCommand(commandName);
 
     if (!command) {
-      const defaultReplyToJid = msg.key.participant || msg.key.remoteJid;
-      if (defaultReplyToJid) {
-        const menuCommand = commands.get("menu");
+      const menuCommand = commandFactory.createCommand("menu");
+      const menuContent = await menuCommand?.execute(
+        sock,
+        msg,
+        args,
+        commandFactory.createAllCommands()
+      );
+      const strategy = StrategyFactory.createStrategy("text");
 
-        const menuMessageContent = await menuCommand.execute(
-          sock,
-          msg,
-          args,
-          commands
-        );
-
-        await sock.sendMessage(
-          defaultReplyToJid,
-          {
-            text: `Comando não encontrado. 
-${menuMessageContent}
-            `,
-          },
-          { quoted: msg }
-        );
-      } else {
-        console.error(
-          "Comando não encontrado e não foi possível determinar JID para resposta.",
-          msg.key
-        );
-      }
-      return;
-    }
-
-    const userId = msg.key.participant || msg.key.remoteJid;
-    if (!userId) {
-      console.error("Não foi possível identificar o usuário para o cooldown.");
-      return;
-    }
-
-    const subCommand = args[0]?.toLowerCase();
-    const timeLeft = checkCooldown(userId, command.name, subCommand);
-    if (timeLeft > 0) {
-      return;
-    }
-
-    setCooldown(userId, command.name, subCommand);
-
-    let finalReplyToJid: string | undefined | null;
-    const isGroupMessage =
-      !!msg.key.participant && msg.key.remoteJid?.endsWith("@g.us");
-
-    if (command.loggable) {
-      registerLog({
-        command: command.name,
-        userId: msg.key.participant || msg.key.remoteJid,
-        groupId: isGroupMessage ? msg.key.remoteJid : null,
-      });
-    }
-
-    if (isGroupMessage) {
-      if (command.privateRestricted === false) {
-        finalReplyToJid = msg.key.remoteJid;
-      } else {
-        finalReplyToJid = msg.key.participant;
-      }
-    } else {
-      finalReplyToJid = msg.key.remoteJid;
-    }
-
-    if (!finalReplyToJid) {
-      console.error(
-        "Não foi possível determinar o JID para resposta para o comando.",
-        msg.key
+      await strategy.execute(
+        sock,
+        msg.key.participant || msg.key.remoteJid!,
+        { text: `Comando não encontrado.\n${menuContent}` },
+        msg
       );
       return;
     }
 
-    try {
-      const responseContent = await command.execute(sock, msg, args, commands);
+    const messageContext = validateMessageContext(msg, command);
+    const subCommand = args[0]?.toLowerCase();
 
-      if (responseContent) {
-        let messageToSend: AnyMessageContent;
-        if (typeof responseContent === "string") {
-          messageToSend = { text: responseContent };
-        } else {
-          messageToSend = responseContent;
-        }
-        await sock.sendMessage(finalReplyToJid, messageToSend, { quoted: msg });
-      }
+    const validation = userValidator.validateUser(
+      messageContext.userId,
+      command,
+      subCommand
+    );
+
+    if (!validation.valid) return;
+
+    userValidator.setCooldown(messageContext.userId, command.name, subCommand);
+
+    if (command.loggable) {
+      apiService.registerLog({
+        command: command.name,
+        userId: messageContext.userId,
+        groupId: messageContext.isGroupMessage ? msg.key.remoteJid! : null,
+      });
+    }
+
+    try {
+      const responseContent = await command.execute(
+        sock,
+        msg,
+        args,
+        commandFactory.createAllCommands()
+      );
+      if (!responseContent) throw new Error("Comando não retornou conteúdo.");
+      const responseIsString = typeof responseContent === "string";
+
+      const messageToSend = responseIsString
+        ? { text: responseContent as string }
+        : (responseContent as AnyMessageContent);
+
+      const strategyType = responseIsString ? "text" : "image";
+      const strategy = StrategyFactory.createStrategy(strategyType);
+      await strategy.execute(
+        sock,
+        messageContext.finalReplyToJid,
+        messageToSend,
+        msg
+      );
     } catch (error) {
       console.error(`Erro ao executar comando ${commandName}:`, error);
       await sock.sendMessage(
-        finalReplyToJid,
+        messageContext.finalReplyToJid,
         { text: "Ocorreu um erro ao tentar executar esse comando." },
         { quoted: msg }
       );

@@ -1,18 +1,21 @@
-import { WAMessage, WASocket } from "baileys";
-import { Command } from "../types/command";
+import { AnyMessageContent, WAMessage, WASocket } from "baileys";
+import { BaseCommand } from "../types/command";
 import { pesFields } from "../resources/constants/imd-pes";
 
-const pesCommand: Command = {
-  name: "pes",
-  description:
-    "Informa a grade necessária para conseguir o certificado de cada PES.",
-  aliases: [],
-  privateRestricted: true,
-  execute: async (
-    sock: WASocket,
-    msg: WAMessage,
-    args: string[]
-  ): Promise<string | null | undefined> => {
+export default class PesCommand extends BaseCommand {
+  name = "pes";
+  description =
+    "Informa a grade necessária para conseguir o certificado de cada PES.";
+  aliases = [];
+  privateRestricted = true;
+  loggable = true;
+
+  async execute(
+    _sock: WASocket,
+    _msg: WAMessage,
+    args: string[],
+    _allCommands?: Map<string, BaseCommand>
+  ): Promise<AnyMessageContent | string | null | undefined> {
     const pes = (args[0]?.toLowerCase() as keyof typeof pesFields) || "";
 
     if (!pes || !pesFields[pes]) {
@@ -49,8 +52,5 @@ fonte:<https://hongkong.imd.ufrn.br/filemanagerportal/source/RESOLUCAO_N_041_202
     `;
 
     return message;
-  },
-  loggable: true,
-};
-
-export default pesCommand;
+  }
+}

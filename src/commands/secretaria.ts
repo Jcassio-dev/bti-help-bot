@@ -1,16 +1,19 @@
-import { Command } from "../types/command";
+import { BaseCommand } from "../types/command";
 import { WASocket, WAMessage, AnyMessageContent } from "baileys";
 
-const secretariaCommand: Command = {
-  name: "secretaria",
-  description: "Envia o contato da secretaria.",
-  aliases: [],
-  privateRestricted: false,
-  execute: async (
+export default class SecretariaCommand extends BaseCommand {
+  name = "secretaria";
+  description = "Envia o contato da secretaria.";
+  aliases = [];
+  privateRestricted = false;
+  loggable = true;
+
+  async execute(
     sock: WASocket,
     msg: WAMessage,
-    _args: string[]
-  ): Promise<AnyMessageContent | string | null | undefined> => {
+    _args: string[],
+    _allCommands?: Map<string, BaseCommand>
+  ): Promise<AnyMessageContent | string | null | undefined> {
     await sock.sendMessage(
       msg.key.remoteJid,
       { text: "Email: secretaria-bti@imd.ufrn.br" },
@@ -30,8 +33,5 @@ END:VCARD`;
         contacts: [{ vcard: contactCard }],
       },
     };
-  },
-  loggable: true,
-};
-
-export default secretariaCommand;
+  }
+}

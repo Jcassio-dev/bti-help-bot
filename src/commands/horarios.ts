@@ -1,16 +1,19 @@
-import { WAMessage, WASocket } from "baileys";
-import { Command } from "../types/command";
+import { AnyMessageContent, WAMessage, WASocket } from "baileys";
+import { BaseCommand } from "../types/command";
 
-const horariosCommand: Command = {
-  name: "horarios",
-  description: "Exibe os horários dos turnos disponíveis.",
-  aliases: ["turno", "horario", "h", "turnos"],
-  privateRestricted: false,
-  execute: async (
-    sock: WASocket,
-    msg: WAMessage,
-    args: string[]
-  ): Promise<string | null | undefined> => {
+export default class HorariosCommand extends BaseCommand {
+  name = "horarios";
+  description = "Exibe os horários dos turnos disponíveis.";
+  aliases = ["turno", "horario", "h", "turnos"];
+  privateRestricted = false;
+  loggable = true;
+
+  async execute(
+    _sock: WASocket,
+    _msg: WAMessage,
+    args: string[],
+    _allCommands?: Map<string, BaseCommand>
+  ): Promise<AnyMessageContent | string | null | undefined> {
     const turns = {
       matutino: {
         letter: "M",
@@ -59,8 +62,5 @@ const horariosCommand: Command = {
     }, `*${type}*\n`);
 
     return message;
-  },
-  loggable: true,
-};
-
-export default horariosCommand;
+  }
+}

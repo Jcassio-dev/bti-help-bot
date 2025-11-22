@@ -1,5 +1,5 @@
 import { WAMessage, WASocket, AnyMessageContent } from "baileys";
-import { Command } from "../types/command";
+import { BaseCommand } from "../types/command";
 import axios from "axios";
 import * as cheerio from "cheerio";
 
@@ -7,7 +7,7 @@ const SCRAP_CONFIG_EDITAIS = {
   URL: "https://www.metropoledigital.ufrn.br/portal/editais",
   MAIN_CLASS: ".card-body a",
   IGNORE_CLASS: "bg-encerrado",
-  LINK_PREFIX: "https://www.metropoledigital.ufrn.br", // Corrigido para ter https://
+  LINK_PREFIX: "https://www.metropoledigital.ufrn.br",
   ELEMENTS: {
     PROCESS: ".box-card-badge",
     VALUE: ".card-text span:nth-child(2)",
@@ -84,16 +84,19 @@ async function fetchAllEditais(): Promise<Edital[] | null> {
   }
 }
 
-const editaisCommand: Command = {
-  name: "editais",
-  description: "Lista editais do portal Metrópole Digital.",
-  aliases: ["bolsas", "metropole"],
-  privateRestricted: true,
-  execute: async (
-    sock: WASocket,
-    msg: WAMessage,
-    args: string[]
-  ): Promise<AnyMessageContent | string | null | undefined> => {
+export default class EditaisCommand extends BaseCommand {
+  name = "editais";
+  description = "Lista editais do portal Metrópole Digital.";
+  aliases = ["bolsas", "metropole"];
+  privateRestricted = true;
+  loggable = true;
+
+  async execute(
+    _sock: WASocket,
+    _msg: WAMessage,
+    _args: string[],
+    _allCommands?: Map<string, BaseCommand>
+  ): Promise<AnyMessageContent | string | null | undefined> {
     const now = Date.now();
 
     if (
@@ -136,8 +139,5 @@ const editaisCommand: Command = {
     }
 
     return responseText;
-  },
-  loggable: true,
-};
-
-export default editaisCommand;
+  }
+}

@@ -1,24 +1,26 @@
-import { WAMessage, WASocket } from "baileys";
-import { Command } from "../types/command";
+import { AnyMessageContent, WAMessage, WASocket } from "baileys";
+import { BaseCommand } from "../types/command";
 
-const menuCommand: Command = {
-  name: "menu",
-  description: "Mostra a lista de comandos disponíveis.",
-  aliases: ["ajuda", "comandos", "help"],
-  privateRestricted: false,
-  execute: async (
-    sock: WASocket,
-    msg: WAMessage,
-    args: string[],
-    allCommands?: Map<string, Command>
-  ): Promise<string | null | undefined> => {
+export default class MenuCommand extends BaseCommand {
+  name = "menu";
+  description = "Mostra a lista de comandos disponíveis.";
+  aliases = ["ajuda", "comandos", "help"];
+  privateRestricted = false;
+  loggable = true;
+
+  async execute(
+    _sock: WASocket,
+    _msg: WAMessage,
+    _args: string[],
+    allCommands?: Map<string, BaseCommand>
+  ): Promise<AnyMessageContent | string | null | undefined> {
     if (!allCommands) {
       return "Desculpe, não consegui carregar a lista de comandos no momento.";
     }
 
     let menuText = "📜 *Menu de Comandos Disponíveis:*\n\n";
 
-    const uniqueCommands = new Set<Command>(allCommands.values());
+    const uniqueCommands = new Set<BaseCommand>(allCommands.values());
 
     for (const cmd of Array.from(uniqueCommands)) {
       if (cmd.name === "menu") continue;
@@ -33,8 +35,5 @@ const menuCommand: Command = {
     }
 
     return menuText;
-  },
-  loggable: true,
-};
-
-export default menuCommand;
+  }
+}

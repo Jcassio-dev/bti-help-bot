@@ -1,13 +1,21 @@
 import axios from "axios";
-import { Command } from "../types/command";
+import { AnyMessageContent, WAMessage, WASocket } from "baileys";
+import { BaseCommand } from "../types/command";
 
-const usoCommand: Command = {
-  name: "uso",
-  description:
-    "Faz uma requisição no servidor e vê quantos comandos você já usou.",
-  aliases: ["eu", "chamadas"],
-  privateRestricted: true,
-  execute: async (sock, msg, args) => {
+export default class UsoCommand extends BaseCommand {
+  name = "uso";
+  description =
+    "Faz uma requisição no servidor e vê quantos comandos você já usou.";
+  aliases = ["eu", "chamadas"];
+  privateRestricted = true;
+  loggable = false;
+
+  async execute(
+    _sock: WASocket,
+    msg: WAMessage,
+    _args: string[],
+    _allCommands?: Map<string, BaseCommand>
+  ): Promise<AnyMessageContent | string | null | undefined> {
     const userId = msg.key.participant || msg.key.remoteJid;
     const apiUrl = process.env.API_BASE_URL || "http://localhost:3000";
 
@@ -27,8 +35,5 @@ const usoCommand: Command = {
       console.error("Erro ao buscar contagem de comandos:", error);
       return "Ocorreu um erro ao buscar sua contagem de comandos.";
     }
-  },
-  loggable: false,
-};
-
-export default usoCommand;
+  }
+}

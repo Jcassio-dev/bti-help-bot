@@ -1,18 +1,20 @@
 import { WAMessage, WASocket, AnyMessageContent } from "baileys";
-import { Command } from "../types/command";
+import { BaseCommand } from "../types/command";
 import * as path from "path";
 import * as fs from "fs";
 
-const calendarioCommand: Command = {
-  name: "calendario",
-  description: "Envia o arquivo do calendário acadêmico.",
-  aliases: ["cal", "acad"],
-  privateRestricted: false,
-  execute: async (
+export default class CalendarioCommand extends BaseCommand {
+  name = "calendario";
+  description = "Envia o arquivo do calendário acadêmico.";
+  aliases = ["cal", "acad"];
+  privateRestricted = false;
+  loggable = true;
+
+  async execute(
     _sock: WASocket,
     _msg: WAMessage,
     _args: string[]
-  ): Promise<AnyMessageContent | string | null | undefined> => {
+  ): Promise<AnyMessageContent | string | null | undefined> {
     const docPath = path.resolve(
       __dirname,
       "..",
@@ -40,8 +42,5 @@ const calendarioCommand: Command = {
       console.error("Erro ao ler ou preparar o pdf do calendário:", error);
       return "Desculpe, ocorreu um erro ao tentar enviar o calendário. Por favor, tente novamente mais tarde.";
     }
-  },
-  loggable: true,
-};
-
-export default calendarioCommand;
+  }
+}
