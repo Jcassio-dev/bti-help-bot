@@ -22,7 +22,7 @@ export default class CalcCommand extends BaseCommand {
   ): Promise<string> {
 
     if(args[0] === "info"){
-        return `*APR*: Média >= 6.0\n*APRN*: 5 <= Média <=6 e nenhuma nota < 4.0\n*REPOSIÇÃO*: alguma nota < 4.0 e média >= 3.0\n*+1 SEMESTRE*: média < 3.0 ou alguma nota < 4 na reposição.`;
+        return `*Envie !calc <n1> <n2>* ou *!calc <n1> <n2> <n3>*\nAPR*: Média >= 6.0\n*APRN*: 5 <= Média <=6 e nenhuma nota < 4.0\n*REPOSIÇÃO*: alguma nota < 4.0 e média >= 3.0\n*+1 SEMESTRE*: média < 3.0 ou alguma nota < 4 na reposição.`;
     }
 
     const notes = args
@@ -48,7 +48,7 @@ export default class CalcCommand extends BaseCommand {
     const average = sum / 2;
 
     if (Math.min(n1, n2) < 4) {
-      return `Média atual: *${average.toFixed(2)}*. Como uma das notas é menor que 4, você vai pra *reposição*.\n\nSe for de 30h, você precisa tirar pelo menos *${Math.max(4,10 - Math.max(n1, n2))}* para passar.`;
+      return `Média atual: *${average.toFixed(2)}*. Como uma das notas é menor que 4, você vai para a *reposição*.\n\nSe for de 30h, você precisa tirar pelo menos *${Math.max(4,10 - Math.max(n1, n2))}* para passar.`;
     }
 
     if (average >= AVERAGES.CUT) {
@@ -70,7 +70,7 @@ export default class CalcCommand extends BaseCommand {
     const hasNoteLessThanFour = notes.some((note) => note < 4);
 
     if (average >= AVERAGES.CUT && !hasNoteLessThanFour) {
-      return `Parabéns! Você já passou com *média* ${average.toFixed(2)}* sem precisar da reposição.`;
+      return `Parabéns! Você já passou com *média ${average.toFixed(2)}* `;
     }
 
     const minorNote = Math.min(n1, n2, n3);
