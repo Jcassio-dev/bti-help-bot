@@ -23,6 +23,7 @@ export class CommandManager {
 
     for (const file of commandFiles) {
       try {
+        const cmdStartTime = Date.now();
         const filePath = path.join(commandsPath, file);
         const commandModule = await import(filePath);
         const CommandClass = commandModule.default;
@@ -44,7 +45,7 @@ export class CommandManager {
               this.commands.set(alias, command)
             );
           }
-          console.log(`Comando carregado: ${command.name}`);
+          console.log(`Comando carregado: ${command.name} (${Date.now() - cmdStartTime}ms)`);
         }
       } catch (error) {
         console.error(`Erro ao carregar comando ${file}:`, error);

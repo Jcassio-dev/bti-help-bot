@@ -22,6 +22,11 @@ export async function handleMessages(
 
     if (!msg.message || msg.key.fromMe) return;
 
+    const messageAge = Date.now() - (msg.messageTimestamp as number) * 1000;
+    if (messageAge > 60000) {
+      return;
+    }
+
     if (msg.message.ephemeralMessage) {
       msg.message = msg.message.ephemeralMessage.message;
     }
@@ -66,13 +71,7 @@ export async function handleMessages(
 
     if (!validation.valid) {
       if (validation.reason === "cooldown" && validation.timeLeft) {
-        await sock.sendMessage(
-          messageContext.userId,
-          {
-            text: `Aguarde ${validation.timeLeft} segundos antes de usar este comando novamente.`,
-          },
-          { quoted: msg }
-        );
+          return; 
       }
       return;
     }
@@ -80,7 +79,6 @@ export async function handleMessages(
     userValidator.setCooldown(messageContext.userId, command.name, subCommand);
 
     if (command.loggable) {
-      // Executa em background sem bloquear a resposta
       apiService.registerLog({
         command: command.name,
         userId: messageContext.userId,

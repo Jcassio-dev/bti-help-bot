@@ -15,6 +15,9 @@ export async function connectToWhatsApp() {
     logger: P({
       level: "info",
     }),
+    syncFullHistory: false,
+    markOnlineOnConnect: true,
+    browser: ["BTI Help Bot", "Chrome", "1.0.0"],
   });
 
   const commandFactory = new CommandFactory();
