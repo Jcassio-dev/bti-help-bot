@@ -6,8 +6,7 @@ import { CommandFactory } from "../factories/command.factory";
 import { parseMessage } from "../utils/message-parser";
 import { UserValidator } from "../utils/user-validator";
 import { validateMessageContext } from "../utils/message-validator";
-
-const commandPrefix = "!";
+import { logger } from "../services/logger.service";
 
 export async function handleMessages(
   sock: WASocket,
@@ -16,6 +15,8 @@ export async function handleMessages(
   commandFactory: CommandFactory = new CommandFactory()
 ) {
   const userValidator = new UserValidator(cooldownService);
+  let lastMessageTime = 0;
+  const MIN_MESSAGE_INTERVAL = 1000; 
 
   sock.ev.on("messages.upsert", async (m) => {
     const msg = m.messages[0];
@@ -23,9 +24,16 @@ export async function handleMessages(
     if (!msg.message || msg.key.fromMe) return;
 
     const messageAge = Date.now() - (msg.messageTimestamp as number) * 1000;
-    if (messageAge > 60000) {
+    if (messageAge > 30000) {
+      logger.debug({ messageAge: Math.round(messageAge/1000) }, "Mensagem antiga ignorada");
       return;
     }
+
+    const timeSinceLastMessage = Date.now() - lastMessageTime;
+    if (timeSinceLastMessage < MIN_MESSAGE_INTERVAL) {
+      await new Promise(resolve => setTimeout(resolve, MIN_MESSAGE_INTERVAL - timeSinceLastMessage));
+    }
+    lastMessageTime = Date.now();
 
     if (msg.message.ephemeralMessage) {
       msg.message = msg.message.ephemeralMessage.message;
@@ -66,7 +74,8 @@ export async function handleMessages(
     const validation = userValidator.validateUser(
       messageContext.userId,
       command,
-      subCommand
+      subCommand,
+      messageContext.isGroupMessage
     );
 
     if (!validation.valid) {
@@ -76,14 +85,14 @@ export async function handleMessages(
       return;
     }
 
-    userValidator.setCooldown(messageContext.userId, command.name, subCommand);
+    userValidator.setCooldown(messageContext.userId, command.name, subCommand, messageContext.isGroupMessage);
 
     if (command.loggable) {
       apiService.registerLog({
         command: command.name,
         userId: messageContext.userId,
         groupId: messageContext.isGroupMessage ? msg.key.remoteJid! : null,
-      }).catch((err) => console.error("[LOG] Erro ao registrar log:", err));
+      }).catch((err) => logger.error({ err }, "Erro ao registrar log"));
     }
 
     try {
@@ -102,19 +111,46 @@ export async function handleMessages(
 
       const strategyType = responseIsString ? "text" : "image";
       const strategy = StrategyFactory.createStrategy(strategyType);
-      await strategy.execute(
-        sock,
-        messageContext.finalReplyToJid,
-        messageToSend,
-        msg
-      );
-    } catch (error) {
-      console.error(`Erro ao executar comando ${commandName}:`, error);
-      await sock.sendMessage(
-        messageContext.finalReplyToJid,
-        { text: "Ocorreu um erro ao tentar executar esse comando." },
-        { quoted: msg }
-      );
+      
+      let retries = 0;
+      const maxRetries = 3;
+      while (retries < maxRetries) {
+        try {
+          await strategy.execute(
+            sock,
+            messageContext.finalReplyToJid,
+            messageToSend,
+            msg
+          );
+          break; 
+        } catch (sendError: any) {
+          if (sendError?.message?.includes("too many times") && retries < maxRetries - 1) {
+            const backoffTime = Math.pow(2, retries) * 2000; 
+            logger.warn({ backoffTime }, "Rate limit detectado. Aguardando...");
+            await new Promise(resolve => setTimeout(resolve, backoffTime));
+            retries++;
+          } else {
+            throw sendError;
+          }
+        }
+      }
+    } catch (error: any) {
+      logger.error({ error, commandName }, "Erro ao executar comando");
+      
+      if (error?.message?.includes("too many times")) {
+        logger.warn("Rate limit atingido. Mensagem não enviada");
+        return;
+      }
+      
+      try {
+        await sock.sendMessage(
+          messageContext.finalReplyToJid,
+          { text: "Ocorreu um erro ao tentar executar esse comando." },
+          { quoted: msg }
+        );
+      } catch (sendError) {
+        logger.error({ sendError }, "Erro ao enviar mensagem de erro");
+      }
     }
   });
 }

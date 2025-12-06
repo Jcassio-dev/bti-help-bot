@@ -5,6 +5,7 @@ import { handleMessages } from "./handlers";
 import * as qrcode from "qrcode-terminal";
 import P from "pino";
 import { CommandFactory } from "../factories/command.factory";
+import { logger } from "../services/logger.service";
 
 export async function connectToWhatsApp() {
   const { state, saveCreds } = await useMultiFileAuthState(
@@ -17,35 +18,34 @@ export async function connectToWhatsApp() {
     }),
     syncFullHistory: false,
     markOnlineOnConnect: true,
+    enableRecentMessageCache: true,
+    
     browser: ["BTI Help Bot", "Chrome", "1.0.0"],
   });
 
   const commandFactory = new CommandFactory();
   await commandFactory.loadCommands();
-  console.log("[BOT] Comandos carregados com sucesso.");
+  logger.info("Comandos carregados com sucesso");
 
   sock.ev.on("connection.update", (update) => {
     const { connection, lastDisconnect, qr } = update;
     if (qr) {
-      console.log("QR Code recebido, escaneie por favor:");
-      console.log("QR Code String", qr);
+      logger.info("QR Code recebido, escaneie por favor");
       qrcode.generate(qr, { small: true });
     }
     if (connection === "close") {
       const shouldReconnect =
         (lastDisconnect?.error as Boom)?.output?.statusCode !==
         DisconnectReason.loggedOut;
-      console.log(
-        "connection closed due to ",
-        lastDisconnect?.error,
-        ", reconnecting ",
+      logger.warn({
+        error: lastDisconnect?.error,
         shouldReconnect
-      );
+      }, "Conexão fechada");
       if (shouldReconnect) {
         connectToWhatsApp();
       }
     } else if (connection === "open") {
-      console.log("opened connection");
+      logger.info("Conexão aberta com WhatsApp");
       handleMessages(sock, undefined, undefined, commandFactory);
     }
   });

@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { ICreateLogDTO } from "../types/api";
+import { logger } from "./logger.service";
 
 export class ApiService {
   private client: AxiosInstance;
@@ -22,9 +23,9 @@ export class ApiService {
     try {
       const payload = { command, userId, groupId };
       await this.client.post("/api/logs/command", payload);
-      console.log(`[LOG] Comando '${command}' registrado com sucesso na API.`);
-    } catch (error) {
-      console.error("[LOG] Falha ao registrar comando na API:", error.message);
+      logger.info({ command }, "Comando registrado na API");
+    } catch (error: any) {
+      logger.error({ error: error?.message, command }, "Falha ao registrar comando na API");
     }
   }
 }

@@ -1,6 +1,7 @@
 import { BaseCommand } from "../types/command";
 import * as fs from "fs";
 import * as path from "path";
+import { logger } from "../services/logger.service";
 
 export class CommandManager {
   private static instance: CommandManager;
@@ -28,7 +29,7 @@ export class CommandManager {
         const commandModule = await import(filePath);
         const CommandClass = commandModule.default;
         if (!CommandClass || typeof CommandClass !== "function") {
-          console.warn(`Classe de comando inválida em: ${file}`);
+          logger.warn({ file }, "Classe de comando inválida");
           continue;
         }
         const command = new CommandClass();
@@ -37,7 +38,7 @@ export class CommandManager {
           !command.name ||
           typeof command.execute !== "function"
         ) {
-          console.warn(`Arquivo de comando inválido: ${file}`);
+          logger.warn({ file }, "Arquivo de comando inválido");
         } else {
           this.commands.set(command.name, command);
           if (command.aliases) {
@@ -45,10 +46,10 @@ export class CommandManager {
               this.commands.set(alias, command)
             );
           }
-          console.log(`Comando carregado: ${command.name} (${Date.now() - cmdStartTime}ms)`);
+          logger.info({ commandName: command.name, loadTime: Date.now() - cmdStartTime }, "Comando carregado");
         }
       } catch (error) {
-        console.error(`Erro ao carregar comando ${file}:`, error);
+        logger.error({ error, file }, "Erro ao carregar comando");
       }
     }
   }

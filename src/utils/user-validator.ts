@@ -13,12 +13,14 @@ export class UserValidator {
   validateUser(
     userId: string,
     command: BaseCommand,
-    subCommand?: string
+    subCommand?: string,
+    isGroup: boolean = false
   ): ValidationResult {
     const timeLeft = this.cooldownService.checkCooldown(
       userId,
       command.name,
-      subCommand
+      subCommand,
+      isGroup
     );
 
     if (timeLeft > 0) {
@@ -32,7 +34,7 @@ export class UserValidator {
     return { valid: true };
   }
 
-  setCooldown(userId: string, commandName: string, subCommand?: string): void {
-    this.cooldownService.setCooldown(userId, commandName, subCommand);
+  setCooldown(userId: string, commandName: string, subCommand?: string, isGroup: boolean = false): void {
+    this.cooldownService.setCooldown(userId, commandName, subCommand, isGroup);
   }
 }
