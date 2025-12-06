@@ -15,8 +15,10 @@ export async function handleMessages(
   commandFactory: CommandFactory = new CommandFactory()
 ) {
   const userValidator = new UserValidator(cooldownService);
+  const groupMessageTimes = new Map<string, number>();
   let lastMessageTime = 0;
-  const MIN_MESSAGE_INTERVAL = 1000; 
+  const MIN_MESSAGE_INTERVAL = 1000;
+  const GROUP_MESSAGE_INTERVAL = 3000; 
 
   sock.ev.on("messages.upsert", async (m) => {
     const msg = m.messages[0];
@@ -29,9 +31,22 @@ export async function handleMessages(
       return;
     }
 
-    const timeSinceLastMessage = Date.now() - lastMessageTime;
-    if (timeSinceLastMessage < MIN_MESSAGE_INTERVAL) {
-      await new Promise(resolve => setTimeout(resolve, MIN_MESSAGE_INTERVAL - timeSinceLastMessage));
+    const isGroup = msg.key.remoteJid?.endsWith('@g.us');
+    const chatId = msg.key.remoteJid!;
+    
+    if (isGroup) {
+      const lastGroupMessageTime = groupMessageTimes.get(chatId) || 0;
+      const timeSinceLastGroupMessage = Date.now() - lastGroupMessageTime;
+      if (timeSinceLastGroupMessage < GROUP_MESSAGE_INTERVAL) {
+        logger.debug({ chatId, waitTime: GROUP_MESSAGE_INTERVAL - timeSinceLastGroupMessage }, "Aguardando intervalo de grupo");
+        return;
+      }
+      groupMessageTimes.set(chatId, Date.now());
+    } else {
+      const timeSinceLastMessage = Date.now() - lastMessageTime;
+      if (timeSinceLastMessage < MIN_MESSAGE_INTERVAL) {
+        await new Promise(resolve => setTimeout(resolve, MIN_MESSAGE_INTERVAL - timeSinceLastMessage));
+      }
     }
     lastMessageTime = Date.now();
 

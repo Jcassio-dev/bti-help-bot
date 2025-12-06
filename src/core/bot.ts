@@ -19,8 +19,12 @@ export async function connectToWhatsApp() {
     syncFullHistory: false,
     markOnlineOnConnect: true,
     enableRecentMessageCache: true,
+    retryRequestDelayMs: 2000,
+    maxMsgRetryCount: 3,
     
     browser: ["BTI Help Bot", "Chrome", "1.0.0"],
+    
+    getMessage: async () => undefined,
   });
 
   const commandFactory = new CommandFactory();
