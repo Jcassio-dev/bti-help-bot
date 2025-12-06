@@ -4,6 +4,8 @@ import * as path from "path";
 import { handleMessages } from "./handlers";
 import * as qrcode from "qrcode-terminal";
 import P from "pino";
+import { CommandFactory } from "../factories/command.factory";
+
 export async function connectToWhatsApp() {
   const { state, saveCreds } = await useMultiFileAuthState(
     path.resolve(__dirname, "..", "..", "auth_info_baileys")
@@ -14,6 +16,10 @@ export async function connectToWhatsApp() {
       level: "info",
     }),
   });
+
+  const commandFactory = new CommandFactory();
+  await commandFactory.loadCommands();
+  console.log("[BOT] Comandos carregados com sucesso.");
 
   sock.ev.on("connection.update", (update) => {
     const { connection, lastDisconnect, qr } = update;
@@ -37,7 +43,7 @@ export async function connectToWhatsApp() {
       }
     } else if (connection === "open") {
       console.log("opened connection");
-      handleMessages(sock);
+      handleMessages(sock, undefined, undefined, commandFactory);
     }
   });
 

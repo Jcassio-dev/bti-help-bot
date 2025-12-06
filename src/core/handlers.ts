@@ -15,8 +15,6 @@ export async function handleMessages(
   cooldownService: CooldownService = CooldownService.getInstance(),
   commandFactory: CommandFactory = new CommandFactory()
 ) {
-  await commandFactory.loadCommands();
-
   const userValidator = new UserValidator(cooldownService);
 
   sock.ev.on("messages.upsert", async (m) => {
@@ -66,16 +64,28 @@ export async function handleMessages(
       subCommand
     );
 
-    if (!validation.valid) return;
+    if (!validation.valid) {
+      if (validation.reason === "cooldown" && validation.timeLeft) {
+        await sock.sendMessage(
+          messageContext.userId,
+          {
+            text: `Aguarde ${validation.timeLeft} segundos antes de usar este comando novamente.`,
+          },
+          { quoted: msg }
+        );
+      }
+      return;
+    }
 
     userValidator.setCooldown(messageContext.userId, command.name, subCommand);
 
     if (command.loggable) {
+      // Executa em background sem bloquear a resposta
       apiService.registerLog({
         command: command.name,
         userId: messageContext.userId,
         groupId: messageContext.isGroupMessage ? msg.key.remoteJid! : null,
-      });
+      }).catch((err) => console.error("[LOG] Erro ao registrar log:", err));
     }
 
     try {
