@@ -27,8 +27,10 @@ export default class CalcCommand extends BaseCommand {
 
     const notes = args
       .map((arg) => parseFloat(arg.replace(",", ".")))
-      .filter((note) => !isNaN(note));
+      .filter((note) => !isNaN(note))
+      .map((note) => Math.min(Math.max(note, 0), 10)); 
 
+      
     if (notes.length < 2 || notes.length > 3) {
       return "Por favor, Use: *!calc <n1> <n2>* ou *!calc <n1> <n2> <n3>* onde n1, n2 e n3 são as notas das avaliações.";
     }
