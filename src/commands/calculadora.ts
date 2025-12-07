@@ -53,7 +53,7 @@ export default class CalcCommand extends BaseCommand {
       return `Média atual: *${average.toFixed(2)}*. Como uma das notas é menor que 4, você vai para a *reposição*.\n\nSe for de 30h, você precisa tirar pelo menos *${Math.max(4,10 - Math.max(n1, n2))}* para passar.`;
     }
 
-    if (average >= AVERAGES.CUT) {
+    if (sum/3 >= AVERAGES.CUT) {
       return `Média atual: *${average.toFixed(2)}*. Parabéns! Você só precisa garantir o 4 na N3.\n\nSe for de 30h, já passou!`;
     }
 
