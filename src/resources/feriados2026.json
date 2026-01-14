@@ -1,0 +1,33 @@
+[
+  { "date": "2026-04-02", "name": "Quinta-feira Santa - Suspensão das atividades acadêmicas" },
+  { "date": "2026-04-03", "name": "Paixão de Cristo - Feriado Nacional" },
+  { "date": "2026-04-04", "name": "Sábado de Aleluia - Suspensão das atividades acadêmicas" },
+  { "date": "2026-04-21", "name": "Dia de Tiradentes - Feriado Nacional" },
+
+  { "date": "2026-05-01", "name": "Dia Mundial do Trabalho - Feriado Nacional" },
+  { "date": "2026-05-22", "name": "Dia de Santa Rita de Cássia - Feriado Municipal em Santa Cruz" },
+
+  { "date": "2026-06-04", "name": "Corpus Christi - Feriado Nacional" },
+  { "date": "2026-06-24", "name": "Festividades Juninas - Suspensão das atividades acadêmicas" },
+  { "date": "2026-06-24", "name": "Dia de São João - Feriado Municipal em Santa Cruz" },
+
+  { "date": "2026-07-23", "name": "Festa da Padroeira Santana - Feriado Municipal em Caicó" },
+  { "date": "2026-07-26", "name": "Dia de Santana - Feriado Municipal em Currais Novos" },
+
+  { "date": "2026-09-07", "name": "Dia da Independência do Brasil - Feriado Nacional" },
+
+  { "date": "2026-10-03", "name": "Dia dos Mártires de Cunhaú e Uruaçu - Feriado Estadual" },
+  { "date": "2026-10-12", "name": "Dia de Nossa Senhora Aparecida - Feriado Nacional" },
+  { "date": "2026-10-15", "name": "Dia da Emancipação Política - Feriado Municipal em Currais Novos" },
+  { "date": "2026-10-27", "name": "Dia da Emancipação Política - Feriado Municipal em Macaíba" },
+  { "date": "2026-10-27", "name": "Dia do Servidor Público - Suspensão das atividades acadêmicas" },
+
+  { "date": "2026-11-02", "name": "Dia de Finados - Feriado Nacional" },
+  { "date": "2026-11-15", "name": "Dia da Proclamação da República - Feriado Nacional" },
+  { "date": "2026-11-20", "name": "Dia Nacional da Consciência Negra - Feriado Nacional" },
+  { "date": "2026-11-21", "name": "Dia de Nossa Senhora da Apresentação - Feriado Municipal em Natal" },
+
+  { "date": "2026-12-08", "name": "Dia de Nossa Senhora da Conceição - Feriado Municipal em Currais Novos e Macaíba" },
+  { "date": "2026-12-11", "name": "Dia da Emancipação Política - Feriado Municipal em Santa Cruz" },
+  { "date": "2026-12-16", "name": "Dia da Emancipação Política - Feriado Municipal em Caicó" }
+]
