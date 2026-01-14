@@ -20,7 +20,7 @@ export default class CalendarioCommand extends BaseCommand {
       "..",
       "resources",
       "docs",
-      "calendario2025.pdf"
+      "calendario2026.pdf"
     );
 
     try {
@@ -34,8 +34,8 @@ export default class CalendarioCommand extends BaseCommand {
       const messageToSend: AnyMessageContent = {
         document: pdfBuffer,
         mimetype: "application/pdf",
-        fileName: "calendario2025.pdf",
-        caption: "Aqui está o calendário do ano letivo de 2025.",
+        fileName: "calendario2026.pdf",
+        caption: "Aqui está o calendário do ano letivo de 2026.",
       };
       return messageToSend;
     } catch (error) {

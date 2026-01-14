@@ -7,7 +7,7 @@ type Feriado = { date: string; name: string };
 
 export default class FeriadosCommand extends BaseCommand {
   name = "feriados";
-  description = "Lista feriados restantes de 2025";
+  description = "Lista feriados restantes de 2026";
   aliases = ["feriado", "holidays"];
   privateRestricted = false;
   loggable = true;
@@ -23,7 +23,7 @@ export default class FeriadosCommand extends BaseCommand {
         __dirname,
         "..",
         "resources",
-        "feriados2025.json"
+        "feriados2026.json"
       );
       const raw = fs.readFileSync(filePath, "utf8");
       const feriados: Feriado[] = JSON.parse(raw);
@@ -37,11 +37,11 @@ export default class FeriadosCommand extends BaseCommand {
         .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
 
       if (upcoming.length === 0)
-        return "Não há feriados futuros registrados em 2025.";
+        return "Não há feriados futuros registrados em 2026.";
 
       const lines = upcoming.map((f) => `${f.date} - ${f.name}`);
 
-      const reply = ["Feriados restantes em 2025:", ...lines].join("\n");
+      const reply = ["Feriados restantes em 2026:", ...lines].join("\n");
       return reply;
     } catch (err) {
       console.error("Erro ao ler feriados:", err);
