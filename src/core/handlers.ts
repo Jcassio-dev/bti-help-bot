@@ -42,19 +42,20 @@ export async function handleMessages(
         const match = rawText.match(/^!(\w+)/);
         return match ? match[1].toLowerCase() : "unknown";
       })();
+
       let groupCooldowns = groupCommandCooldowns.get(chatId);
+
       if (!groupCooldowns) {
         groupCooldowns = new Map<string, number>();
         groupCommandCooldowns.set(chatId, groupCooldowns);
       }
+      
       const lastCommandTime = groupCooldowns.get(commandKey) || 0;
       const timeSinceLastCommand = Date.now() - lastCommandTime;
+
       if (timeSinceLastCommand < GROUP_MESSAGE_INTERVAL) {
         logger.debug({ chatId, commandKey, waitTime: GROUP_MESSAGE_INTERVAL - timeSinceLastCommand }, "Aguardando intervalo de grupo por comando");
-        await sock.sendMessage(
-          chatId,
-          { text: `Aguarde 2 minutos para enviar o comando !${commandKey} novamente neste grupo.` }
-        );
+       
         return;
       }
       groupCooldowns.set(commandKey, Date.now());
