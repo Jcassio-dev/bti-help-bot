@@ -15,7 +15,8 @@ export async function handleMessages(
   commandFactory: CommandFactory = new CommandFactory()
 ) {
   const userValidator = new UserValidator(cooldownService);
-  const groupMessageTimes = new Map<string, number>();
+  // Cooldown por comando por grupo
+  const groupCommandCooldowns = new Map<string, Map<string, number>>();
   let lastMessageTime = 0;
   const MIN_MESSAGE_INTERVAL = 1000;
   const GROUP_MESSAGE_INTERVAL = 3000; 
@@ -35,13 +36,28 @@ export async function handleMessages(
     const chatId = msg.key.remoteJid!;
     
     if (isGroup) {
-      const lastGroupMessageTime = groupMessageTimes.get(chatId) || 0;
-      const timeSinceLastGroupMessage = Date.now() - lastGroupMessageTime;
-      if (timeSinceLastGroupMessage < GROUP_MESSAGE_INTERVAL) {
-        logger.debug({ chatId, waitTime: GROUP_MESSAGE_INTERVAL - timeSinceLastGroupMessage }, "Aguardando intervalo de grupo");
+      const commandKey = (() => {
+        const rawText = msg.message.conversation || msg.message.extendedTextMessage?.text;
+        if (!rawText) return "unknown";
+        const match = rawText.match(/^!(\w+)/);
+        return match ? match[1].toLowerCase() : "unknown";
+      })();
+      let groupCooldowns = groupCommandCooldowns.get(chatId);
+      if (!groupCooldowns) {
+        groupCooldowns = new Map<string, number>();
+        groupCommandCooldowns.set(chatId, groupCooldowns);
+      }
+      const lastCommandTime = groupCooldowns.get(commandKey) || 0;
+      const timeSinceLastCommand = Date.now() - lastCommandTime;
+      if (timeSinceLastCommand < GROUP_MESSAGE_INTERVAL) {
+        logger.debug({ chatId, commandKey, waitTime: GROUP_MESSAGE_INTERVAL - timeSinceLastCommand }, "Aguardando intervalo de grupo por comando");
+        await sock.sendMessage(
+          chatId,
+          { text: `Aguarde 2 minutos para enviar o comando !${commandKey} novamente neste grupo.` }
+        );
         return;
       }
-      groupMessageTimes.set(chatId, Date.now());
+      groupCooldowns.set(commandKey, Date.now());
     } else {
       const timeSinceLastMessage = Date.now() - lastMessageTime;
       if (timeSinceLastMessage < MIN_MESSAGE_INTERVAL) {
