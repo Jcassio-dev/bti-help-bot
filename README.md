@@ -19,7 +19,7 @@ O bot oferece diversos comandos úteis para o dia a dia acadêmico:
 ### 📚 Informações Acadêmicas
 
 - **`!grade <tipo>`** - Visualize a grade curricular (cc, es, bia, integral, noturno)
-- **`!calendario`** - Confira o calendário acadêmico 2025
+- **`!calendario`** - Confira o calendário acadêmico 2026
 - **`!horarios <turno>`** - Veja os horários de aula (matutino, vespertino, noturno)
 - **`!faltas`** - Calcule o limite de faltas por carga horária
 - **`!pes <área>`** - Informações sobre certificados PES (ia, dados, jogos, iot, inov, edu, bio)
@@ -35,7 +35,7 @@ O bot oferece diversos comandos úteis para o dia a dia acadêmico:
 
 ### 📅 Datas Importantes
 
-- **`!feriados`** - Próximos feriados de 2025
+- **`!feriados`** - Próximos feriados de 2026
 
 ### 📞 Contatos
 
@@ -169,18 +169,18 @@ bti-help-bot/
 │   │   ├── secretaria.ts
 │   │   └── uso.ts
 │   ├── core/                  # Lógica principal
-│   │   ├── api.ts            # Cliente da API
-│   │   ├── bot.ts            # Configuração do Baileys
-│   │   └── handlers.ts       # Manipulador de mensagens
+│   │   ├── api.ts             # Cliente da API
+│   │   ├── bot.ts             # Configuração do Baileys
+│   │   └── handlers.ts        # Manipulador de mensagens
 │   ├── resources/             # Recursos estáticos
-│   │   ├── constants/        # Constantes (PES, etc)
-│   │   ├── docs/             # PDFs e documentos
-│   │   ├── imgs/             # Imagens das grades
-│   │   └── feriados2025.json
+│   │   ├── constants/         # Constantes (PES, etc)
+│   │   ├── docs/              # PDFs e documentos
+│   │   ├── imgs/              # Imagens das grades
+│   │   └── feriados2026.json
 │   ├── types/                 # Definições TypeScript
 │   │   ├── api.ts
 │   │   └── command.ts
-│   └── index.ts              # Ponto de entrada
+│   └── index.ts               # Ponto de entrada
 ├── auth_info_baileys/         # Sessão do WhatsApp (não versionado)
 ├── dist/                      # Código compilado
 ├── .env                       # Variáveis de ambiente
