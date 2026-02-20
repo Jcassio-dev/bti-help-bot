@@ -27,7 +27,7 @@ const grades: Record<string, GradeInfo> = {
   },
   bia: {
     filename: "grade-bia.jpeg",
-    caption: "Essa é a grade da ênfase em Inteligência Artificial.",
+    caption: "Essa é a grade do bacharelado em Inteligência Artificial.",
   },
 };
 
