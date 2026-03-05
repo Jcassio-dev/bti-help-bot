@@ -9,21 +9,26 @@ import { logger } from "../services/logger.service";
 
 export async function connectToWhatsApp() {
   const { state, saveCreds } = await useMultiFileAuthState(
-    path.resolve(__dirname, "..", "..", "auth_info_baileys")
+    path.resolve(__dirname, "..", "..", "auth_info_baileys"),
   );
   const sock = makeWASocket({
     auth: state,
     logger: P({
       level: "info",
     }),
+    version: (
+      await (
+        await fetch(
+          "https://raw.githubusercontent.com/WhiskeySockets/Baileys/master/src/Defaults/baileys-version.json",
+        )
+      ).json()
+    ).version,
     syncFullHistory: false,
     markOnlineOnConnect: true,
-    enableRecentMessageCache: true,
     retryRequestDelayMs: 2000,
     maxMsgRetryCount: 3,
-    
-    browser: ["BTI Help Bot", "Chrome", "1.0.0"],
-    
+
+    browser: ["Ubuntu", "Chrome", "20.0.04"],
     getMessage: async () => undefined,
   });
 
@@ -41,10 +46,13 @@ export async function connectToWhatsApp() {
       const shouldReconnect =
         (lastDisconnect?.error as Boom)?.output?.statusCode !==
         DisconnectReason.loggedOut;
-      logger.warn({
-        error: lastDisconnect?.error,
-        shouldReconnect
-      }, "Conexão fechada");
+      logger.warn(
+        {
+          error: lastDisconnect?.error,
+          shouldReconnect,
+        },
+        "Conexão fechada",
+      );
       if (shouldReconnect) {
         connectToWhatsApp();
       }

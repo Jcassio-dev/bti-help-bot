@@ -1,17 +1,16 @@
 {
   "compilerOptions": {
-    // ...existing compilerOptions...
-    "outDir": "./dist", // Adicione ou modifique esta linha
-    "rootDir": "./src", // Adicione esta linha para especificar a raiz dos seus fontes
-    // ...existing compilerOptions...
-    "skipLibCheck": true
+    "outDir": "./dist", 
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
   },
   "include": [
-    "src/**/*" // Garanta que apenas a pasta src seja incluída na compilação
+    "src/**/*" 
   ],
   "exclude": [
     "node_modules",
     "dist"
-    // Adicione outros padrões de exclusão se necessário
   ]
 }
