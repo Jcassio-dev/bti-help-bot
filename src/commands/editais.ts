@@ -120,10 +120,8 @@ export default class EditaisCommand extends BaseCommand {
       return "Nenhum edital encontrado no Metrópole Digital ou o cache está vazio.";
     }
 
-    const editaisToDisplay = cachedEditais.slice(0, 5);
-
     let responseText = "📢 *Editais Recentes do Metrópole Digital:*\n\n";
-    editaisToDisplay.forEach((edital) => {
+    cachedEditais.forEach((edital) => {
       responseText += `*${edital.titulo}*\n`;
       responseText += `  Tipo: ${edital.tipo}\n`;
       responseText += `  Processo: ${edital.processo}\n`;
@@ -131,12 +129,6 @@ export default class EditaisCommand extends BaseCommand {
       responseText += `  Valor: ${edital.valor}\n`;
       responseText += `  Link: ${edital.link}\n\n`;
     });
-
-    if (cachedEditais.length > editaisToDisplay.length) {
-      responseText += `\nE mais ${
-        cachedEditais.length - editaisToDisplay.length
-      } editais. Visite o site para ver todos.`;
-    }
 
     return responseText;
   }
