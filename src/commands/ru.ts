@@ -75,6 +75,11 @@ type WeekCache = Partial<Record<string, { menu: DayMenu; timestamp: number }>>;
 
 const cache: WeekCache = {};
 
+const MEAL_TIMES = {
+  almoco: "11:00 - 14:00",
+  jantar: "17:00 - 19:30",
+};
+
 interface TextElement {
   text: string;
   x: number;
@@ -193,6 +198,65 @@ function parseMealItems(elements: TextElement[]): MealItems | null {
   return hasContent ? items : null;
 }
 
+async function scrapeFromMainPage(page: any, dayAbbr: string): Promise<DayMenu> {
+  const raw: TextElement[] = await page.evaluate(() => {
+    const result: { text: string; x: number; y: number }[] = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    let node;
+    while ((node = walker.nextNode())) {
+      const text = node.textContent?.trim() ?? "";
+      if (!text) continue;
+      const parent = node.parentElement;
+      if (!parent) continue;
+      const rect = parent.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) continue;
+      result.push({ text, x: Math.round(rect.left), y: Math.round(rect.top) });
+    }
+    return result;
+  });
+
+  const byRow = new Map<number, TextElement[]>();
+  for (const el of raw) {
+    const row = Math.round(el.y / 12) * 12;
+    if (!byRow.has(row)) byRow.set(row, []);
+    byRow.get(row)!.push(el);
+  }
+  const merged: TextElement[] = [];
+  for (const [, group] of byRow) {
+    group.sort((a, b) => a.x - b.x);
+    let i = 0;
+    while (i < group.length) {
+      if (i + 1 < group.length && group[i + 1].x - group[i].x < 50) {
+        merged.push({ text: group[i].text + " " + group[i + 1].text, x: group[i].x, y: group[i].y });
+        i += 2;
+      } else {
+        merged.push(group[i]);
+        i++;
+      }
+    }
+  }
+
+  const almocoHeader = merged.find((el) => new RegExp(`A\\s*${dayAbbr}`, "i").test(el.text));
+  const jantarHeader = merged.find((el) => new RegExp(`J\\s*${dayAbbr}`, "i").test(el.text));
+
+  const extractCol = (header: TextElement | undefined): MealItems | null => {
+    if (!header) return null;
+    const COL = 120;
+    const items = raw
+      .filter(
+        (el) =>
+          Math.abs(el.x - header.x) < COL &&
+          el.y > header.y + 10 &&
+          !isNoiseElement(el) &&
+          el.text.length > 1
+      )
+      .sort((a, b) => a.y - b.y);
+    return parseMealItems(items);
+  };
+
+  return { almoco: extractCol(almocoHeader), jantar: extractCol(jantarHeader) };
+}
+
 async function scrapeDay(dayAbbr: string): Promise<DayMenu> {
   console.log(`[RU] Buscando cardápio de ${dayAbbr}...`);
   let browser;
@@ -217,11 +281,11 @@ async function scrapeDay(dayAbbr: string): Promise<DayMenu> {
     const buttonText = DAY_BUTTON_TEXT[dayAbbr];
     const norm = (s: string) =>
       s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, "");
-    const dayLink = dayLinks.find((l) => norm(l.text) === norm(buttonText));
+    const dayLink = dayLinks.find((l) => norm(l.text).includes(norm(buttonText)));
 
     if (!dayLink) {
-      console.warn(`[RU] Link não encontrado para ${dayAbbr} (texto: ${buttonText})`);
-      return { almoco: null, jantar: null };
+      console.warn(`[RU] Link nao encontrado para ${dayAbbr}, tentando extracao posicional...`);
+      return scrapeFromMainPage(page, dayAbbr);
     }
 
     await page.goto(dayLink.href, { waitUntil: "networkidle2", timeout: 30000 });
@@ -232,15 +296,20 @@ async function scrapeDay(dayAbbr: string): Promise<DayMenu> {
 
     let jantar: MealItems | null = null;
     try {
-      await page.click('text/Jantar');
+      await page.evaluate(() => {
+        const el = Array.from(document.querySelectorAll("*")).find(
+          (e) => e.textContent?.trim() === "Jantar" && e.children.length === 0
+        );
+        if (el) (el as HTMLElement).click();
+      });
       await new Promise((r) => setTimeout(r, 1500));
       const jantarElements = await getPageTextElements(page);
       jantar = parseMealItems(jantarElements);
     } catch {
-      console.warn(`[RU] Seção de jantar não encontrada para ${dayAbbr}`);
+      console.warn(`[RU] Secao de jantar nao encontrada para ${dayAbbr}`);
     }
     console.log(
-      `[RU] ${dayAbbr} — almoço: ${almoco ? "ok" : "fechado"}, jantar: ${jantar ? "ok" : "fechado"}`
+      `[RU] ${dayAbbr} - almoco: ${almoco ? "ok" : "fechado"}, jantar: ${jantar ? "ok" : "fechado"}`
     );
     return { almoco, jantar };
   } catch (err) {
@@ -271,10 +340,10 @@ function formatDayMenu(dayAbbr: string, menu: DayMenu): string {
   const dayName = DAY_FULL[dayAbbr] ?? dayAbbr;
   let text = `*Cardapio RU UFRN - ${dayName}*\n\n`;
 
-  text += `*Almoco:*\n`;
+  text += `*Almoco (${MEAL_TIMES.almoco}):*\n`;
   text += formatMeal(menu.almoco);
   text += "\n";
-  text += `*Jantar:*\n`;
+  text += `*Jantar (${MEAL_TIMES.jantar}):*\n`;
   text += formatMeal(menu.jantar);
 
   return text.trim();
