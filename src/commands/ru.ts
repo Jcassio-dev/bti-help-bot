@@ -157,7 +157,15 @@ async function scrapeDay(dayAbbr: string): Promise<DayMenu> {
   try {
     browser = await puppeteer.launch({
       executablePath: "/usr/bin/chromium",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--no-first-run",
+        "--no-zygote",
+        "--single-process",
+      ],
       headless: true,
     });
 
@@ -232,7 +240,10 @@ export default class RuCommand extends BaseCommand {
     }
 
     const menu = await scrapeDay(targetDay);
-    cache[targetDay] = { menu, timestamp: ts };
+
+    if (menu.almoco || menu.jantar) {
+      cache[targetDay] = { menu, timestamp: ts };
+    }
 
     return formatDayMenu(targetDay, menu);
   }
