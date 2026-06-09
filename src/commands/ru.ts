@@ -17,45 +17,42 @@ const DAY_ABBR: Record<number, string> = {
 
 const DAY_FULL: Record<string, string> = {
   SEG: "Segunda-feira",
-  TER: "Terça-feira",
+  TER: "Terca-feira",
   QUA: "Quarta-feira",
   QUI: "Quinta-feira",
   SEX: "Sexta-feira",
-  SAB: "Sábado",
+  SAB: "Sabado",
   DOM: "Domingo",
 };
 
-const DAY_BUTTON_TEXT: Record<string, string> = {
-  SEG: "Segunda",
-  TER: "Terça",
-  QUA: "Quarta",
-  QUI: "Quinta",
-  SEX: "Sexta",
-  SAB: "Sábado",
-  DOM: "Domingo",
+const PAGE_MAP: Record<string, { almoco: string; jantar: string }> = {
+  SEG: { almoco: "#page-1", jantar: "#page-2" },
+  TER: { almoco: "#page-3", jantar: "#page-4" },
+  QUA: { almoco: "#page-5", jantar: "#page-6" },
+  QUI: { almoco: "#page-7", jantar: "#page-8" },
+  SEX: { almoco: "#page-9", jantar: "#page-a" },
+  SAB: { almoco: "#page-b", jantar: "#page-c" },
+  DOM: { almoco: "#page-d", jantar: "#page-e" },
 };
 
-const SECTION_LABELS = new Set([
-  "Prato Convencional",
-  "Prato Vegetariano",
-  "Acompanhamentos",
-  "Bebidas",
-  "Sobremesas",
-]);
+const MEAL_TIMES = {
+  almoco: "10:30 - 13:30",
+  jantar: "17:00 - 19:00",
+};
 
-const ALLERGENS = new Set(["Glúten", "Leite", "Ovo", "Açúcar", "Suíno"]);
+const SECTION_MAP: Record<string, keyof MealItems> = {
+  "Prato Convencional": "convencional",
+  "Prato Vegetariano": "vegetariano",
+  "Acompanhamentos": "acompanhamentos",
+  "Bebidas": "bebidas",
+  "Sobremesas": "sobremesas",
+};
 
-const UI_NOISE = new Set([
-  "Voltar",
-  "Almoço",
-  "Jantar",
-  "Obs:",
-  "Fechado",
-  "FECHADO",
-  "Escolha o dia",
-  "Central",
-  "Biomédica",
-  "Tecnológica",
+const NOISE = new Set([
+  "Voltar", "Almoço", "Jantar", "Obs:", "Fechado", "FECHADO",
+  "Escolha o dia", "Central", "Biomedica", "Tecnologica",
+  "Gluten", "Leite", "Ovo", "Acucar", "Suino",
+  "Glúten", "Açúcar", "Suíno", "Biomédica",
 ]);
 
 interface MealItems {
@@ -75,101 +72,48 @@ type WeekCache = Partial<Record<string, { menu: DayMenu; timestamp: number }>>;
 
 const cache: WeekCache = {};
 
-const MEAL_TIMES = {
-  almoco: "11:00 - 14:00",
-  jantar: "17:00 - 19:30",
-};
-
-interface TextElement {
+interface RichElement {
   text: string;
-  x: number;
   y: number;
+  bold: boolean;
 }
 
-function isNoiseElement(el: TextElement): boolean {
-  if (ALLERGENS.has(el.text)) return true;
-  if (UI_NOISE.has(el.text)) return true;
-  if (isEmojiOnly(el.text)) return true;
-  if (/^[AJ]\s+(SEG|TER|QUA|QUI|SEX|SAB|DOM)/i.test(el.text)) return true;
-  if (/cardápio semanal|cardápio sujeito/i.test(el.text)) return true;
-  if (/terms|privacy|canva|close|report|acceptable use/i.test(el.text)) return true;
-  if (/restaurante universitário/i.test(el.text)) return true;
-  if (/semana de/i.test(el.text)) return true;
-  if (/if you see anything|personal data|privacy practices/i.test(el.text)) return true;
-  if (el.text === "S" || el.text === "ábado") return true;
-  if (el.x > 1100) return true;
+function isNoise(text: string): boolean {
+  if (NOISE.has(text)) return true;
+  if (/^[\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\s]+$/u.test(text)) return true;
+  if (/terms|privacy|canva|close|report|acceptable use/i.test(text)) return true;
+  if (/restaurante universitário/i.test(text)) return true;
+  if (/cardápio semanal|cardápio sujeito/i.test(text)) return true;
+  if (/semana de/i.test(text)) return true;
+  if (/if you see anything|personal data|privacy practices/i.test(text)) return true;
+  if (/designed with/i.test(text)) return true;
   return false;
 }
 
-async function getPageTextElements(page: any): Promise<TextElement[]> {
-  const raw: TextElement[] = await page.evaluate(() => {
-    const result: { text: string; x: number; y: number }[] = [];
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-      null
-    );
-    let node;
-    while ((node = walker.nextNode())) {
-      const text = node.textContent?.trim() ?? "";
-      if (!text) continue;
-      const parent = node.parentElement;
-      if (!parent) continue;
-      const rect = parent.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) continue;
-      result.push({
-        text,
-        x: Math.round(rect.left),
-        y: Math.round(rect.top),
-      });
-    }
-    return result;
+async function extractPageContent(page: any): Promise<RichElement[]> {
+  return page.evaluate(() => {
+    return Array.from(document.querySelectorAll("span"))
+      .filter((el) => {
+        if (el.children.length > 0) return false;
+        const text = el.textContent?.trim() ?? "";
+        if (text.length < 2) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0 && rect.top > 80 && rect.top < 1450;
+      })
+      .map((el) => {
+        const rect = el.getBoundingClientRect();
+        const weight = parseInt((window.getComputedStyle(el) as any).fontWeight) || 400;
+        return {
+          text: el.textContent?.trim() ?? "",
+          y: Math.round(rect.top),
+          bold: weight >= 700,
+        };
+      })
+      .sort((a: any, b: any) => a.y - b.y);
   });
-
-  const preFiltered = raw.filter((el) => !isNoiseElement(el));
-
-  const merged: TextElement[] = [];
-  const byY: Map<number, TextElement[]> = new Map();
-  for (const el of preFiltered) {
-    const bucket = Math.round(el.y / 8) * 8;
-    if (!byY.has(bucket)) byY.set(bucket, []);
-    byY.get(bucket)!.push(el);
-  }
-  for (const [, group] of byY) {
-    group.sort((a, b) => a.x - b.x);
-    let i = 0;
-    while (i < group.length) {
-      const cur = group[i];
-      if (
-        i + 1 < group.length &&
-        group[i + 1].x - (cur.x + 10) < 60 &&
-        !SECTION_LABELS.has(cur.text) &&
-        !SECTION_LABELS.has(group[i + 1].text)
-      ) {
-        merged.push({
-          text: cur.text + " " + group[i + 1].text,
-          x: cur.x,
-          y: cur.y,
-        });
-        i += 2;
-      } else {
-        merged.push(cur);
-        i++;
-      }
-    }
-  }
-  return merged;
 }
 
-function isEmojiOnly(text: string): boolean {
-  return text.replace(/[\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\s]/gu, "").length === 0;
-}
-
-function parseMealItems(elements: TextElement[]): MealItems | null {
-  const cleaned = elements
-    .filter((el) => !/segunda|terça|quarta|quinta|sexta|sábado|domingo/i.test(el.text) || el.y > 200)
-    .sort((a, b) => a.y - b.y);
-
+function parseMealItems(elements: RichElement[]): MealItems | null {
   const items: MealItems = {
     convencional: [],
     vegetariano: [],
@@ -180,85 +124,35 @@ function parseMealItems(elements: TextElement[]): MealItems | null {
 
   let section: keyof MealItems = "convencional";
 
-  for (const el of cleaned) {
-    if (el.text === "Prato Convencional") { section = "convencional"; continue; }
-    if (el.text === "Prato Vegetariano") { section = "vegetariano"; continue; }
-    if (el.text === "Acompanhamentos") { section = "acompanhamentos"; continue; }
-    if (el.text === "Bebidas") { section = "bebidas"; continue; }
-    if (el.text === "Sobremesas") { section = "sobremesas"; continue; }
+  for (const el of elements) {
+    if (isNoise(el.text)) continue;
+
+    const mapped = SECTION_MAP[el.text];
+    if (mapped) {
+      section = mapped;
+      continue;
+    }
+
+    if (/segunda|terça|quarta|quinta|sexta|sábado|domingo|feira/i.test(el.text)) continue;
 
     items[section].push(el.text);
   }
 
-  const hasContent =
-    items.convencional.length > 0 ||
-    items.vegetariano.length > 0 ||
-    items.acompanhamentos.length > 0;
-
+  const hasContent = Object.values(items).some((arr) => arr.length > 0);
   return hasContent ? items : null;
 }
 
-async function scrapeFromMainPage(page: any, dayAbbr: string): Promise<DayMenu> {
-  const raw: TextElement[] = await page.evaluate(() => {
-    const result: { text: string; x: number; y: number }[] = [];
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-    let node;
-    while ((node = walker.nextNode())) {
-      const text = node.textContent?.trim() ?? "";
-      if (!text) continue;
-      const parent = node.parentElement;
-      if (!parent) continue;
-      const rect = parent.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) continue;
-      result.push({ text, x: Math.round(rect.left), y: Math.round(rect.top) });
-    }
-    return result;
-  });
-
-  const byRow = new Map<number, TextElement[]>();
-  for (const el of raw) {
-    const row = Math.round(el.y / 12) * 12;
-    if (!byRow.has(row)) byRow.set(row, []);
-    byRow.get(row)!.push(el);
-  }
-  const merged: TextElement[] = [];
-  for (const [, group] of byRow) {
-    group.sort((a, b) => a.x - b.x);
-    let i = 0;
-    while (i < group.length) {
-      if (i + 1 < group.length && group[i + 1].x - group[i].x < 50) {
-        merged.push({ text: group[i].text + " " + group[i + 1].text, x: group[i].x, y: group[i].y });
-        i += 2;
-      } else {
-        merged.push(group[i]);
-        i++;
-      }
-    }
-  }
-
-  const almocoHeader = merged.find((el) => new RegExp(`A\\s*${dayAbbr}`, "i").test(el.text));
-  const jantarHeader = merged.find((el) => new RegExp(`J\\s*${dayAbbr}`, "i").test(el.text));
-
-  const extractCol = (header: TextElement | undefined): MealItems | null => {
-    if (!header) return null;
-    const COL = 120;
-    const items = raw
-      .filter(
-        (el) =>
-          Math.abs(el.x - header.x) < COL &&
-          el.y > header.y + 10 &&
-          !isNoiseElement(el) &&
-          el.text.length > 1
-      )
-      .sort((a, b) => a.y - b.y);
-    return parseMealItems(items);
-  };
-
-  return { almoco: extractCol(almocoHeader), jantar: extractCol(jantarHeader) };
+async function scrapeMeal(page: any, hash: string): Promise<MealItems | null> {
+  await page.goto(RU_URL + hash, { waitUntil: "networkidle2", timeout: 30000 });
+  await new Promise((r) => setTimeout(r, 2500));
+  const elements = await extractPageContent(page);
+  return parseMealItems(elements);
 }
 
 async function scrapeDay(dayAbbr: string): Promise<DayMenu> {
-  console.log(`[RU] Buscando cardápio de ${dayAbbr}...`);
+  const pages = PAGE_MAP[dayAbbr];
+  if (!pages) return { almoco: null, jantar: null };
+
   let browser;
   try {
     browser = await puppeteer.launch({
@@ -269,51 +163,14 @@ async function scrapeDay(dayAbbr: string): Promise<DayMenu> {
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
-    await page.goto(RU_URL, { waitUntil: "networkidle2", timeout: 30000 });
-    await new Promise((r) => setTimeout(r, 2500));
 
-    const dayLinks: { text: string; href: string }[] = await page.evaluate(() => {
-      return Array.from(document.querySelectorAll("a"))
-        .map((a) => ({ text: a.textContent?.trim().replace(/\s+/g, " ") ?? "", href: a.href }))
-        .filter((l) => l.href.includes("#page-"));
-    });
+    const almoco = await scrapeMeal(page, pages.almoco);
+    const jantar = await scrapeMeal(page, pages.jantar);
 
-    const buttonText = DAY_BUTTON_TEXT[dayAbbr];
-    const norm = (s: string) =>
-      s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, "");
-    const dayLink = dayLinks.find((l) => norm(l.text).includes(norm(buttonText)));
-
-    if (!dayLink) {
-      console.warn(`[RU] Link nao encontrado para ${dayAbbr}, tentando extracao posicional...`);
-      return scrapeFromMainPage(page, dayAbbr);
-    }
-
-    await page.goto(dayLink.href, { waitUntil: "networkidle2", timeout: 30000 });
-    await new Promise((r) => setTimeout(r, 2500));
-
-    const almocoElements = await getPageTextElements(page);
-    const almoco = parseMealItems(almocoElements);
-
-    let jantar: MealItems | null = null;
-    try {
-      await page.evaluate(() => {
-        const el = Array.from(document.querySelectorAll("*")).find(
-          (e) => e.textContent?.trim() === "Jantar" && e.children.length === 0
-        );
-        if (el) (el as HTMLElement).click();
-      });
-      await new Promise((r) => setTimeout(r, 1500));
-      const jantarElements = await getPageTextElements(page);
-      jantar = parseMealItems(jantarElements);
-    } catch {
-      console.warn(`[RU] Secao de jantar nao encontrada para ${dayAbbr}`);
-    }
-    console.log(
-      `[RU] ${dayAbbr} - almoco: ${almoco ? "ok" : "fechado"}, jantar: ${jantar ? "ok" : "fechado"}`
-    );
+    console.log(`[RU] ${dayAbbr} - almoco: ${almoco ? "ok" : "fechado"}, jantar: ${jantar ? "ok" : "fechado"}`);
     return { almoco, jantar };
   } catch (err) {
-    console.error("[RU] Erro ao buscar cardápio:", err);
+    console.error("[RU] Erro ao buscar cardapio:", err);
     return { almoco: null, jantar: null };
   } finally {
     await browser?.close();
@@ -325,33 +182,35 @@ function formatSection(label: string, items: string[]): string {
   return `*${label}:*\n${items.map((i) => `• ${i}`).join("\n")}\n`;
 }
 
-function formatMeal(meal: MealItems | null): string {
-  if (!meal) return "_Fechado_\n";
-  let text = "";
+function formatMeal(meal: MealItems | null, label: string, time: string): string {
+  let text = `*${label} (${time}):*\n`;
+  if (!meal) {
+    text += "_Fechado_\n";
+    return text;
+  }
   text += formatSection("Prato Convencional", meal.convencional);
   text += formatSection("Prato Vegetariano", meal.vegetariano);
   text += formatSection("Acompanhamentos", meal.acompanhamentos);
   text += formatSection("Bebidas", meal.bebidas);
   text += formatSection("Sobremesas", meal.sobremesas);
-  return text || "_Cardapio nao disponivel_\n";
+  if (text === `*${label} (${time}):*\n`) {
+    text += "_Cardapio nao disponivel_\n";
+  }
+  return text;
 }
 
 function formatDayMenu(dayAbbr: string, menu: DayMenu): string {
   const dayName = DAY_FULL[dayAbbr] ?? dayAbbr;
   let text = `*Cardapio RU UFRN - ${dayName}*\n\n`;
-
-  text += `*Almoco (${MEAL_TIMES.almoco}):*\n`;
-  text += formatMeal(menu.almoco);
+  text += formatMeal(menu.almoco, "Almoco", MEAL_TIMES.almoco);
   text += "\n";
-  text += `*Jantar (${MEAL_TIMES.jantar}):*\n`;
-  text += formatMeal(menu.jantar);
-
+  text += formatMeal(menu.jantar, "Jantar", MEAL_TIMES.jantar);
   return text.trim();
 }
 
 export default class RuCommand extends BaseCommand {
   name = "ru";
-  description = "Mostra o cardápio do RU UFRN para hoje.";
+  description = "Mostra o cardapio do RU UFRN para hoje.";
   aliases = ["cardapio", "rurefeicao"];
   privateRestricted = false;
   loggable = true;
@@ -369,7 +228,6 @@ export default class RuCommand extends BaseCommand {
     const cached = cache[targetDay];
 
     if (cached && ts - cached.timestamp < CACHE_DURATION_MS) {
-      console.log(`[RU] Servindo ${targetDay} do cache.`);
       return formatDayMenu(targetDay, cached.menu);
     }
 
