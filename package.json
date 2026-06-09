@@ -22,6 +22,7 @@
     "cheerio": "^1.0.0",
     "dotenv": "^17.2.3",
     "nodemon": "^3.1.10",
+    "puppeteer-core": "^25.1.0",
     "qrcode-terminal": "^0.12.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
