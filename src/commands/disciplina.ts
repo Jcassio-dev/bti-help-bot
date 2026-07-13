@@ -31,8 +31,8 @@ export default class DisciplinaCommand extends BaseCommand {
         return `Não achei disciplina com *"${termo}"*.\nVeja a lista: ${link("disciplina", termo)}`;
       }
 
-      const maxGroups = isGroup ? 1 : 3;
-      const maxPerGroup = isGroup ? 4 : 6;
+      const maxGroups = isGroup ? 2 : 3;
+      const maxPerGroup = isGroup ? 3 : 6;
       const body = renderGrouped(
         items,
         (i) => i.componenteNome ?? "(sem nome)",
