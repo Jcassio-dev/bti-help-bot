@@ -21,14 +21,14 @@ export default class ProfessorCommand extends BaseCommand {
     if (!termo) {
       return (
         `Consulta a aprovação de um professor. Ex: *!professor maxwell*\n` +
-        `🔗 Ou navegue por todos: ${link("professor", "")}`
+        `Ou navegue por todos: ${link("professor", "")}`
       );
     }
 
     try {
       const items = await fetchAprovacao("docente", termo);
       if (items.length === 0) {
-        return `Não achei professor com *"${termo}"*.\n🔗 Veja a lista: ${link("professor", termo)}`;
+        return `Não achei professor com *"${termo}"*.\nVeja a lista: ${link("professor", termo)}`;
       }
 
       const maxGroups = isGroup ? 1 : 3;
@@ -41,7 +41,7 @@ export default class ProfessorCommand extends BaseCommand {
         maxPerGroup
       );
 
-      return `👨‍🏫 *Aprovação entre alunos de BTI*\n\n${body}\n\n🔗 ver todos / filtrar: ${link("professor", termo)}`;
+      return `*Aprovação entre alunos de BTI*\n\n${body}\n\nver todos / filtrar: ${link("professor", termo)}`;
     } catch (error) {
       return "Ops, não consegui consultar a taxa agora. Tenta de novo em instantes.";
     }
