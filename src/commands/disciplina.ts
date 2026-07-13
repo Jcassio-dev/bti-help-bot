@@ -2,10 +2,10 @@ import { AnyMessageContent, WAMessage, WASocket } from "baileys";
 import { BaseCommand } from "../types/command";
 import { emoji, fetchAprovacao, link, pct, renderGrouped } from "../utils/aprovacao";
 
-export default class AprovacaoCommand extends BaseCommand {
-  name = "aprovacao";
-  description = "Taxa de aprovação por professor numa disciplina. Uso: !aprovacao <disciplina>";
-  aliases = ["aprovação", "taxa"];
+export default class DisciplinaCommand extends BaseCommand {
+  name = "disciplina";
+  description = "Taxa de aprovação por professor numa disciplina. Uso: !disciplina <nome>";
+  aliases = ["aprovacao", "aprovação", "taxa"];
   privateRestricted = false;
   loggable = true;
 
@@ -20,7 +20,7 @@ export default class AprovacaoCommand extends BaseCommand {
 
     if (!termo) {
       return (
-        `Consulta a aprovação por professor. Ex: *!aprovacao calculo 1*\n` +
+        `Consulta a aprovação por professor. Ex: *!disciplina calculo 1*\n` +
         `Ou navegue por todas as disciplinas: ${link("disciplina", "")}`
       );
     }
