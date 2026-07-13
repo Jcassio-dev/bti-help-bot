@@ -35,8 +35,8 @@ export default class AprovacaoCommand extends BaseCommand {
       const maxPerGroup = isGroup ? 4 : 6;
       const body = renderGrouped(
         items,
-        (i) => i.componenteNome ?? "—",
-        (i) => `${emoji(i.taxa)} ${pct(i.taxa)}% — ${i.docenteNome ?? "(não informado)"} _(n=${i.total})_`,
+        (i) => i.componenteNome ?? "(sem nome)",
+        (i) => `${emoji(i.taxa)} *${pct(i.taxa)}%* ${i.docenteNome ?? "(não informado)"} (${i.total} alunos)`,
         maxGroups,
         maxPerGroup
       );
