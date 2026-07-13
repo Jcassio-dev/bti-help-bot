@@ -11,7 +11,7 @@ export function parseMessage(messageContent: string): ParsedMessage {
     return { commandName: "", args: [], isCommand: false };
   }
 
-  const args = messageContent.slice(commandPrefix.length).trim().split(/ +/);
+  const args = messageContent.slice(commandPrefix.length).trim().split(/\s+/);
   const commandName = args.shift()?.toLowerCase() || "";
 
   return {

@@ -6,6 +6,7 @@ export abstract class BaseCommand {
   public abstract aliases?: string[];
   public abstract privateRestricted?: boolean;
   public abstract loggable?: boolean;
+  public hidden?: boolean;
 
   public abstract execute(
     sock: WASocket,
