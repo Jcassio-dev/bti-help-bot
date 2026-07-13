@@ -31,8 +31,8 @@ export default class DisciplinaCommand extends BaseCommand {
         return `Não achei disciplina com *"${termo}"*.\nVeja a lista: ${link("disciplina", termo)}`;
       }
 
-      const maxGroups = isGroup ? 2 : 3;
-      const maxPerGroup = isGroup ? 3 : 6;
+      const maxGroups = isGroup ? 2 : 4;
+      const maxPerGroup = isGroup ? 5 : 20;
       const body = renderGrouped(
         items,
         (i) => i.componenteNome ?? "(sem nome)",
@@ -43,10 +43,13 @@ export default class DisciplinaCommand extends BaseCommand {
         ["matéria encontrada", "matérias encontradas"]
       );
 
-      return (
-        `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\n` +
-        `*Ver todos e filtrar no site:*\n${link("disciplina", termo)}`
-      );
+      const materias = new Set(items.map((i) => i.componenteNome ?? "")).size;
+      const rodape =
+        materias > maxGroups
+          ? `_Muitas matérias — refine com o número, ex:_ *!disciplina ${termo} 1*\n\n*Ver todos e filtrar no site:*\n${link("disciplina", termo)}`
+          : `*Ver todos e filtrar no site:*\n${link("disciplina", termo)}`;
+
+      return `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\n${rodape}`;
     } catch (error) {
       return "Ops, não consegui consultar a taxa agora. Tenta de novo em instantes.";
     }

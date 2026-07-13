@@ -31,8 +31,8 @@ export default class ProfessorCommand extends BaseCommand {
         return `Não achei professor com *"${termo}"*.\nVeja a lista: ${link("professor", termo)}`;
       }
 
-      const maxGroups = isGroup ? 1 : 3;
-      const maxPerGroup = isGroup ? 5 : 8;
+      const maxGroups = isGroup ? 1 : 4;
+      const maxPerGroup = isGroup ? 6 : 20;
       const body = renderGrouped(
         items,
         (i) => i.docenteNome ?? "(não informado)",
@@ -43,10 +43,13 @@ export default class ProfessorCommand extends BaseCommand {
         ["professor encontrado", "professores encontrados"]
       );
 
-      return (
-        `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\n` +
-        `*Ver todos e filtrar no site:*\n${link("professor", termo)}`
-      );
+      const profs = new Set(items.map((i) => i.docenteNome ?? "")).size;
+      const rodape =
+        profs > maxGroups
+          ? `_Vários professores — seja mais específico no nome._\n\n*Ver todos e filtrar no site:*\n${link("professor", termo)}`
+          : `*Ver todos e filtrar no site:*\n${link("professor", termo)}`;
+
+      return `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\n${rodape}`;
     } catch (error) {
       return "Ops, não consegui consultar a taxa agora. Tenta de novo em instantes.";
     }
