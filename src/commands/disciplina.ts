@@ -38,10 +38,15 @@ export default class DisciplinaCommand extends BaseCommand {
         (i) => i.componenteNome ?? "(sem nome)",
         (i) => `${emoji(i.taxa)} *${pct(i.taxa)}%* ${i.docenteNome ?? "(não informado)"} (${i.total} alunos)`,
         maxGroups,
-        maxPerGroup
+        maxPerGroup,
+        ["professor", "professores"],
+        ["matéria encontrada", "matérias encontradas"]
       );
 
-      return `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\nver todos / filtrar: ${link("disciplina", termo)}`;
+      return (
+        `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\n` +
+        `*Ver todos e filtrar no site:*\n${link("disciplina", termo)}`
+      );
     } catch (error) {
       return "Ops, não consegui consultar a taxa agora. Tenta de novo em instantes.";
     }

@@ -38,13 +38,18 @@ export function emoji(taxa: number): string {
   return "🔴";
 }
 
-/** Agrupa os itens por uma chave e renderiza secoes em markdown do WhatsApp. */
+function conta(n: number, formas: [string, string]): string {
+  return `${n} ${n === 1 ? formas[0] : formas[1]}`;
+}
+
 export function renderGrouped(
   items: AprovacaoItem[],
   keyOf: (i: AprovacaoItem) => string,
   lineOf: (i: AprovacaoItem) => string,
   maxGroups: number,
-  maxPerGroup: number
+  maxPerGroup: number,
+  itemFormas: [string, string],
+  grupoFormas: [string, string]
 ): string {
   const groups = new Map<string, AprovacaoItem[]>();
   for (const it of items) {
@@ -53,12 +58,24 @@ export function renderGrouped(
     groups.get(k)!.push(it);
   }
 
+  const chaves = Array.from(groups.keys());
   const parts: string[] = [];
-  let g = 0;
-  for (const [k, list] of groups) {
-    if (g++ >= maxGroups) break;
-    const lines = list.slice(0, maxPerGroup).map(lineOf).join("\n");
-    parts.push(`*${k}*\n${lines}`);
+
+  for (const k of chaves.slice(0, maxGroups)) {
+    const list = groups.get(k)!;
+    const lines = list.slice(0, maxPerGroup).map(lineOf);
+    const sobra = list.length - maxPerGroup;
+    if (sobra > 0) {
+      lines.push(`_...e mais ${conta(sobra, itemFormas)}_`);
+    }
+    parts.push(`*${k}*\n${lines.join("\n")}`);
   }
-  return parts.join("\n\n");
+
+  let body = parts.join("\n\n");
+
+  const sobraGrupos = chaves.length - Math.min(chaves.length, maxGroups);
+  if (sobraGrupos > 0) {
+    body += `\n\n_e mais ${conta(sobraGrupos, grupoFormas)}_`;
+  }
+  return body;
 }

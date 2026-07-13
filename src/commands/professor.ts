@@ -38,10 +38,15 @@ export default class ProfessorCommand extends BaseCommand {
         (i) => i.docenteNome ?? "(não informado)",
         (i) => `${emoji(i.taxa)} *${pct(i.taxa)}%* ${i.componenteNome ?? "(sem nome)"} (${i.total} alunos)`,
         maxGroups,
-        maxPerGroup
+        maxPerGroup,
+        ["disciplina", "disciplinas"],
+        ["professor encontrado", "professores encontrados"]
       );
 
-      return `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\nver todos / filtrar: ${link("professor", termo)}`;
+      return (
+        `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\n` +
+        `*Ver todos e filtrar no site:*\n${link("professor", termo)}`
+      );
     } catch (error) {
       return "Ops, não consegui consultar a taxa agora. Tenta de novo em instantes.";
     }
