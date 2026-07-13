@@ -22,7 +22,7 @@ export default class AvisoCommand extends BaseCommand {
   ): Promise<AnyMessageContent | string | null | undefined> {
     const sender = (msg.key.participant || msg.key.remoteJid || "").split("@")[0];
     if (ADMIN_IDS.length === 0 || !ADMIN_IDS.includes(sender)) {
-      return `Comando restrito a moderadores.\n_(id detectado: ${sender})_`;
+      return "Comando restrito a moderadores.";
     }
 
     const raw = msg.message?.conversation ?? msg.message?.extendedTextMessage?.text ?? "";
