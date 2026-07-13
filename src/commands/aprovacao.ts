@@ -41,7 +41,7 @@ export default class AprovacaoCommand extends BaseCommand {
         maxPerGroup
       );
 
-      return `*Aprovação entre alunos de BTI*\n\n${body}\n\nver todos / filtrar: ${link("disciplina", termo)}`;
+      return `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\nver todos / filtrar: ${link("disciplina", termo)}`;
     } catch (error) {
       return "Ops, não consegui consultar a taxa agora. Tenta de novo em instantes.";
     }
