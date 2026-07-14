@@ -2,7 +2,7 @@ import { WAMessage, WASocket, AnyMessageContent } from "baileys";
 import { BaseCommand } from "../types/command";
 import puppeteer from "puppeteer-core";
 
-const RU_URL = "https://cardapiosemanalruufrn.my.canva.site/rudaufrn/";
+const RU_URL = "https://cardapiosemanalruufrn.my.canva.site/card-pio-semanal-ru-ufrn/";
 const CACHE_DURATION_MS = 6 * 60 * 60 * 1000;
 
 const DAY_ABBR: Record<number, string> = {
@@ -26,13 +26,13 @@ const DAY_FULL: Record<string, string> = {
 };
 
 const PAGE_MAP: Record<string, { almoco: string; jantar: string }> = {
-  SEG: { almoco: "#page-1", jantar: "#page-2" },
-  TER: { almoco: "#page-3", jantar: "#page-4" },
-  QUA: { almoco: "#page-5", jantar: "#page-6" },
-  QUI: { almoco: "#page-7", jantar: "#page-8" },
-  SEX: { almoco: "#page-9", jantar: "#page-a" },
-  SAB: { almoco: "#page-b", jantar: "#page-c" },
-  DOM: { almoco: "#page-d", jantar: "#page-e" },
+  SEG: { almoco: "a-seg-c", jantar: "j-seg-c" },
+  TER: { almoco: "a-ter-c", jantar: "j-ter-c" },
+  QUA: { almoco: "a-qua-c", jantar: "j-qua-c" },
+  QUI: { almoco: "a-qui-c", jantar: "j-qui-c" },
+  SEX: { almoco: "a-sex-c", jantar: "j-sex-c" },
+  SAB: { almoco: "a-sab-c", jantar: "j-sab-c" },
+  DOM: { almoco: "a-dom-c", jantar: "j-dom-c" },
 };
 
 const MEAL_TIMES = {
@@ -80,6 +80,7 @@ interface RichElement {
 
 function isNoise(text: string): boolean {
   if (NOISE.has(text)) return true;
+  if (/^[aj]\s+(seg|ter|qua|qui|sex|sab|dom)\s+[cbt]$/i.test(text)) return true;
   if (/^[\p{Emoji}\p{Emoji_Modifier}\p{Emoji_Component}\s]+$/u.test(text)) return true;
   if (/terms|privacy|canva|close|report|acceptable use/i.test(text)) return true;
   if (/restaurante universitário/i.test(text)) return true;
@@ -193,7 +194,7 @@ function formatSection(label: string, items: string[]): string {
 function formatMeal(meal: MealItems | null, label: string, time: string): string {
   let text = `*${label} (${time}):*\n`;
   if (!meal) {
-    text += "_Fechado_\n";
+    text += "_não disponível_\n";
     return text;
   }
   text += formatSection("Prato Convencional", meal.convencional);
@@ -209,6 +210,9 @@ function formatMeal(meal: MealItems | null, label: string, time: string): string
 
 function formatDayMenu(dayAbbr: string, menu: DayMenu): string {
   const dayName = DAY_FULL[dayAbbr] ?? dayAbbr;
+  if (!menu.almoco && !menu.jantar) {
+    return `*Cardapio RU UFRN - ${dayName}*\n\n_Sem cardapio cadastrado para hoje._`;
+  }
   let text = `*Cardapio RU UFRN - ${dayName}*\n\n`;
   text += formatMeal(menu.almoco, "Almoco", MEAL_TIMES.almoco);
   text += "\n";
