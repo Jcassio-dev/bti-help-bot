@@ -1,6 +1,13 @@
 import { AnyMessageContent, WAMessage, WASocket } from "baileys";
 import { BaseCommand } from "../types/command";
-import { emoji, fetchAprovacao, link, pct, renderGrouped } from "../utils/aprovacao";
+import {
+  emoji,
+  fetchAprovacao,
+  link,
+  pct,
+  renderGrouped,
+  textoHomenagemProfessor,
+} from "../utils/aprovacao";
 
 export default class ProfessorCommand extends BaseCommand {
   name = "professor";
@@ -49,7 +56,11 @@ export default class ProfessorCommand extends BaseCommand {
           ? `_Vários professores — seja mais específico no nome._\n\n*Ver todos e filtrar no site:*\n${link("professor", termo)}`
           : `*Ver todos e filtrar no site:*\n${link("professor", termo)}`;
 
-      return `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\n${rodape}`;
+      const homenagem = textoHomenagemProfessor(
+        items.find((i) => (i.docenteNome ?? "").toLowerCase().includes("maxwell gomes da silva"))?.docenteNome
+      );
+
+      return `${homenagem}\n\n${body}\n\n${rodape}`;
     } catch (error) {
       return "Ops, não consegui consultar a taxa agora. Tenta de novo em instantes.";
     }

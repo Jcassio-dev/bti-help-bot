@@ -38,6 +38,28 @@ export function emoji(taxa: number): string {
   return "🔴";
 }
 
+const MEMORIAL_ALVO = "maxwell gomes da silva";
+
+export function ehMemorial(nome?: string | null): boolean {
+  return (nome ?? "").toLowerCase().includes(MEMORIAL_ALVO);
+}
+
+export function nomeDocente(nome?: string | null): string {
+  const n = nome ?? "(não informado)";
+  return ehMemorial(n) ? `🕊️ ${n} (1993 - 2026)` : n;
+}
+
+export const MEMORIAL_TEXTO =
+  `🕊️ *In Memoriam de Maxwell Gomes da Silva (1993 - 2026)*\n\n` +
+  `Professor querido do BTI, pai e esposo dedicado, sempre lembrado pelo cuidado com cada aluno e cada turma.\n` +
+  `Que estas aprovações contem um pouco do educador que ele foi.`;
+
+export function textoHomenagemProfessor(nome?: string | null): string {
+  return ehMemorial(nome)
+    ? `${MEMORIAL_TEXTO}\n\n`
+    : "*Aprovação entre alunos dos cursos de computação*";
+}
+
 function conta(n: number, formas: [string, string]): string {
   return `${n} ${n === 1 ? formas[0] : formas[1]}`;
 }
