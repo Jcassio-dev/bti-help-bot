@@ -38,10 +38,10 @@ export function emoji(taxa: number): string {
   return "🔴";
 }
 
-const MEMORIAL_ALVO = "maxwell gomes da silva";
+const MELHOR_PROFESSOR_QUE_O_IMD_TEVE = "maxwell gomes da silva";
 
 export function ehMemorial(nome?: string | null): boolean {
-  return (nome ?? "").toLowerCase().includes(MEMORIAL_ALVO);
+  return (nome ?? "").toLowerCase().includes(MELHOR_PROFESSOR_QUE_O_IMD_TEVE);
 }
 
 export function nomeDocente(nome?: string | null): string {
@@ -56,7 +56,7 @@ export const MEMORIAL_TEXTO =
 
 export function textoHomenagemProfessor(nome?: string | null): string {
   return ehMemorial(nome)
-    ? `${MEMORIAL_TEXTO}\n\n`
+    ? `${MEMORIAL_TEXTO}`
     : "*Aprovação entre alunos dos cursos de computação*";
 }
 
