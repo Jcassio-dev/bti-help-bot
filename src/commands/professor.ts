@@ -4,6 +4,7 @@ import {
   emoji,
   fetchAprovacao,
   link,
+  nomeDocente,
   pct,
   renderGrouped,
   textoHomenagemProfessor,
@@ -42,7 +43,7 @@ export default class ProfessorCommand extends BaseCommand {
       const maxPerGroup = isGroup ? 6 : 20;
       const body = renderGrouped(
         items,
-        (i) => i.docenteNome ?? "(não informado)",
+        (i) => nomeDocente(i.docenteNome),
         (i) => `${emoji(i.taxa)} *${pct(i.taxa)}%* ${i.componenteNome ?? "(sem nome)"} (${i.total} alunos)`,
         maxGroups,
         maxPerGroup,

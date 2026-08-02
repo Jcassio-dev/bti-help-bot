@@ -1,6 +1,15 @@
 import { AnyMessageContent, WAMessage, WASocket } from "baileys";
 import { BaseCommand } from "../types/command";
-import { emoji, fetchAprovacao, link, pct, renderGrouped } from "../utils/aprovacao";
+import {
+  ehMemorial,
+  emoji,
+  fetchAprovacao,
+  link,
+  MEMORIAL_TEXTO,
+  nomeDocente,
+  pct,
+  renderGrouped,
+} from "../utils/aprovacao";
 
 export default class DisciplinaCommand extends BaseCommand {
   name = "disciplina";
@@ -36,7 +45,7 @@ export default class DisciplinaCommand extends BaseCommand {
       const body = renderGrouped(
         items,
         (i) => i.componenteNome ?? "(sem nome)",
-        (i) => `${emoji(i.taxa)} *${pct(i.taxa)}%* ${i.docenteNome ?? "(não informado)"} (${i.total} alunos)`,
+        (i) => `${emoji(i.taxa)} *${pct(i.taxa)}%* ${nomeDocente(i.docenteNome)} (${i.total} alunos)`,
         maxGroups,
         maxPerGroup,
         ["professor", "professores"],
@@ -49,7 +58,9 @@ export default class DisciplinaCommand extends BaseCommand {
           ? `_Muitas matérias — refine com o número, ex:_ *!disciplina ${termo} 1*\n\n*Ver todos e filtrar no site:*\n${link("disciplina", termo)}`
           : `*Ver todos e filtrar no site:*\n${link("disciplina", termo)}`;
 
-      return `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\n${rodape}`;
+      const homenagem = items.some((i) => ehMemorial(i.docenteNome)) ? `\n\n${MEMORIAL_TEXTO}` : "";
+
+      return `*Aprovação entre alunos dos cursos de computação*\n\n${body}${homenagem}\n\n${rodape}`;
     } catch (error) {
       return "Ops, não consegui consultar a taxa agora. Tenta de novo em instantes.";
     }
