@@ -19,5 +19,5 @@ jobs:
             cd ${{ secrets.BOT_DIR }}
             git pull origin main
             cd ${{ secrets.DASHBOARD_DIR }}/deploy
-            docker compose -f docker-compose.prod.yml up -d --build bot
+            docker compose -f docker-compose.prod.yml up -d --build --no-deps bot
             docker image prune -f
