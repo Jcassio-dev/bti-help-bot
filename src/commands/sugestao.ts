@@ -8,8 +8,8 @@ const EXPIRA_MS = 10 * 60 * 1000;
 
 export default class SugestaoCommand extends BaseCommand {
   name = "sugestao";
-  description = "Envie uma sugestão ou ideia pro bot. Uso: !sugestao <sua ideia>";
-  aliases = ["sugestão", "feedback", "ideia"];
+  description = "Envie uma sugestão ou ideia pro bot. Uso: !sgt <sua ideia>";
+  aliases = ["sgt", "sugestão", "feedback", "ideia"];
   privateRestricted = true;
   loggable = true;
 
@@ -27,34 +27,27 @@ export default class SugestaoCommand extends BaseCommand {
     if (sub === "sim" || sub === "nao" || sub === "não") {
       const pend = this.pendentes.get(userId);
       if (!pend || Date.now() - pend.ts > EXPIRA_MS) {
-        return "Sua sugestão expirou. Manda de novo com *!sugestao <ideia>*.";
+        return "Sua sugestão expirou. Manda de novo com *!sgt <ideia>*.";
       }
       this.pendentes.delete(userId);
       const contato = sub === "sim" ? userId.split("@")[0] : null;
       return this.salvar(pend.texto, contato);
     }
 
-    if (sub === "confirmar") {
-      const pend = this.pendentes.get(userId);
-      if (!pend || Date.now() - pend.ts > EXPIRA_MS) {
-        return "Não achei sugestão pra confirmar. Manda *!sugestao <sua ideia>* primeiro.";
-      }
-      pend.ts = Date.now();
-      return (
-        "Posso registrar seu contato para eventuais dúvidas sobre a sugestão?\n\n" +
-        "Responda *!sugestao sim* (registra seu número) ou *!sugestao nao* (anônimo)."
-      );
+    if (sub === "cancelar") {
+      this.pendentes.delete(userId);
+      return "Beleza, descartei a sugestão.";
     }
 
     const texto = args.join(" ").trim();
     if (texto.length < 3) {
-      return "Manda a sugestão junto! Ex: *!sugestao adiciona um comando de horário do ônibus*";
+      return "Manda a sugestão junto! Ex: *!sgt adiciona um comando de horário do ônibus*";
     }
 
     this.pendentes.set(userId, { texto, ts: Date.now() });
     return (
-      `Será salva a sugestão:\n\n_"${texto}"_\n\n` +
-      `Envie *!sugestao confirmar* para guardar.`
+      `Vou salvar a sugestão:\n\n_"${texto}"_\n\n` +
+      `Confirma? Responda *!sgt sim* (registra seu contato), *!sgt nao* (anônimo) ou *!sgt cancelar*.`
     );
   }
 
