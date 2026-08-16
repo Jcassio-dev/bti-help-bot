@@ -51,7 +51,10 @@ export default class SugestaoCommand extends BaseCommand {
     this.pendentes.set(userId, { texto, ts: Date.now() });
     return (
       `Vou salvar a sugestão:\n\n_"${texto}"_\n\n` +
-      `Confirma? Responda > *!sgt sim* (registra seu contato) \n>*!sgt nao* (anônimo)\n>*!sgt cancelar*.`
+      `Confirma? Responda:\n` +
+      `• *!sgt sim* — registra seu contato\n` +
+      `• *!sgt nao* — anônimo\n` +
+      `• *!sgt cancelar* — descarta`
     );
   }
 
