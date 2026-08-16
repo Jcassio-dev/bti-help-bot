@@ -22,27 +22,42 @@ export default class SugestaoCommand extends BaseCommand {
     _allCommands?: Map<string, BaseCommand>
   ): Promise<AnyMessageContent | string | null | undefined> {
     const userId = msg.key.participant || msg.key.remoteJid || "";
-    const texto = args.join(" ").trim();
+    const sub = (args[0] || "").toLowerCase();
 
-    if (texto.toLowerCase() === "confirmar") {
+    if (sub === "contato") {
       const pend = this.pendentes.get(userId);
       if (!pend || Date.now() - pend.ts > EXPIRA_MS) {
-        return "Não achei nenhuma sugestão pra confirmar. Manda *!sugestao <sua ideia>* primeiro.";
+        return "Sua sugestão expirou. Manda de novo com *!sugestao <ideia>*.";
       }
       this.pendentes.delete(userId);
-      const contato = userId.split("@")[0];
-      try {
-        await axios.post(
-          `${API}/api/sugestao`,
-          { texto: pend.texto, userId: contato },
-          { headers: { "X-API-Key": KEY } }
-        );
-        return "Muito obrigado, nossa equipe vai avaliar sua sugestão!";
-      } catch (error) {
-        return "Ops, não consegui registrar agora. Tenta de novo em instantes.";
-      }
+      const contato = (args[1] || "").toLowerCase() === "sim" ? userId.split("@")[0] : null;
+      return this.salvar(pend.texto, contato);
     }
 
+    if (sub === "confirmar") {
+      const pend = this.pendentes.get(userId);
+      if (!pend || Date.now() - pend.ts > EXPIRA_MS) {
+        return "Não achei sugestão pra confirmar. Manda *!sugestao <sua ideia>* primeiro.";
+      }
+      pend.ts = Date.now();
+      return {
+        text: "Posso registrar seu contato para eventuais dúvidas sobre a sugestão?",
+        footer: "Sua sugestão será guardada de qualquer forma.",
+        title: "Contato",
+        buttonText: "Responder",
+        sections: [
+          {
+            title: "Escolha uma opção",
+            rows: [
+              { title: "Sim, pode registrar", rowId: "!sugestao contato sim" },
+              { title: "Não, obrigado", rowId: "!sugestao contato nao" },
+            ],
+          },
+        ],
+      } as unknown as AnyMessageContent;
+    }
+
+    const texto = args.join(" ").trim();
     if (texto.length < 3) {
       return "Manda a sugestão junto! Ex: *!sugestao adiciona um comando de horário do ônibus*";
     }
@@ -52,5 +67,18 @@ export default class SugestaoCommand extends BaseCommand {
       `Será salva a sugestão:\n\n_"${texto}"_\n\n` +
       `Envie *!sugestao confirmar* para guardar.`
     );
+  }
+
+  private async salvar(texto: string, contato: string | null): Promise<string> {
+    try {
+      await axios.post(
+        `${API}/api/sugestao`,
+        { texto, userId: contato },
+        { headers: { "X-API-Key": KEY } }
+      );
+      return "Muito obrigado, nossa equipe vai avaliar sua sugestão!";
+    } catch (error) {
+      return "Ops, não consegui registrar agora. Tenta de novo em instantes.";
+    }
   }
 }
