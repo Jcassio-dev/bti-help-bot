@@ -71,10 +71,8 @@ export async function handleMessages(
       msg.message = msg.message.ephemeralMessage.message;
     }
 
-    const listReplyId =
-      msg.message.listResponseMessage?.singleSelectReply?.selectedRowId;
     const messageContent =
-      msg.message.conversation || msg.message.extendedTextMessage?.text || listReplyId;
+      msg.message.conversation || msg.message.extendedTextMessage?.text;
     if (!messageContent) return;
 
     const parsed = parseMessage(messageContent);

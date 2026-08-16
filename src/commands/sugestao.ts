@@ -24,13 +24,13 @@ export default class SugestaoCommand extends BaseCommand {
     const userId = msg.key.participant || msg.key.remoteJid || "";
     const sub = (args[0] || "").toLowerCase();
 
-    if (sub === "contato") {
+    if (sub === "sim" || sub === "nao" || sub === "não") {
       const pend = this.pendentes.get(userId);
       if (!pend || Date.now() - pend.ts > EXPIRA_MS) {
         return "Sua sugestão expirou. Manda de novo com *!sugestao <ideia>*.";
       }
       this.pendentes.delete(userId);
-      const contato = (args[1] || "").toLowerCase() === "sim" ? userId.split("@")[0] : null;
+      const contato = sub === "sim" ? userId.split("@")[0] : null;
       return this.salvar(pend.texto, contato);
     }
 
@@ -40,21 +40,10 @@ export default class SugestaoCommand extends BaseCommand {
         return "Não achei sugestão pra confirmar. Manda *!sugestao <sua ideia>* primeiro.";
       }
       pend.ts = Date.now();
-      return {
-        text: "Posso registrar seu contato para eventuais dúvidas sobre a sugestão?",
-        footer: "Sua sugestão será guardada de qualquer forma.",
-        title: "Contato",
-        buttonText: "Responder",
-        sections: [
-          {
-            title: "Escolha uma opção",
-            rows: [
-              { title: "Sim, pode registrar", rowId: "!sugestao contato sim" },
-              { title: "Não, obrigado", rowId: "!sugestao contato nao" },
-            ],
-          },
-        ],
-      } as unknown as AnyMessageContent;
+      return (
+        "Posso registrar seu contato para eventuais dúvidas sobre a sugestão?\n\n" +
+        "Responda *!sugestao sim* (registra seu número) ou *!sugestao nao* (anônimo)."
+      );
     }
 
     const texto = args.join(" ").trim();
