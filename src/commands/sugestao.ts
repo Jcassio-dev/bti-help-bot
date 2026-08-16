@@ -52,9 +52,9 @@ export default class SugestaoCommand extends BaseCommand {
     return (
       `Vou salvar a sugestão:\n\n_"${texto}"_\n\n` +
       `Confirma? Responda:\n` +
-      `• *!sgt sim* — registra seu contato\n` +
-      `• *!sgt nao* — anônimo\n` +
-      `• *!sgt cancelar* — descarta`
+      `• *!sgt sim* - registra seu contato\n` +
+      `• *!sgt nao* - anônimo\n` +
+      `• *!sgt cancelar* - descarta`
     );
   }
 

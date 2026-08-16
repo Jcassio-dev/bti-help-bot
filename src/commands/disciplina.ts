@@ -58,7 +58,7 @@ export default class DisciplinaCommand extends BaseCommand {
 
       return `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\n${rodape}`;
     } catch (error) {
-      return "Ops, não consegui consultar a taxa agora. Tenta de novo em instantes.";
+      return "Ops, não consegui consultar a taxa agora. Tenta de novo depois.";
     }
   }
 }
