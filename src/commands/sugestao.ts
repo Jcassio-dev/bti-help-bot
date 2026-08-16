@@ -30,8 +30,10 @@ export default class SugestaoCommand extends BaseCommand {
         return "Sua sugestão expirou. Manda de novo com *!sgt <ideia>*.";
       }
       this.pendentes.delete(userId);
-      const contato = sub === "sim" ? userId.split("@")[0] : null;
-      return this.salvar(pend.texto, contato);
+      const registrar = sub === "sim";
+      const contato = registrar ? userId.split("@")[0] : null;
+      const nome = registrar ? msg.pushName || null : null;
+      return this.salvar(pend.texto, contato, nome);
     }
 
     if (sub === "cancelar") {
@@ -51,11 +53,15 @@ export default class SugestaoCommand extends BaseCommand {
     );
   }
 
-  private async salvar(texto: string, contato: string | null): Promise<string> {
+  private async salvar(
+    texto: string,
+    contato: string | null,
+    nome: string | null
+  ): Promise<string> {
     try {
       await axios.post(
         `${API}/api/sugestao`,
-        { texto, userId: contato },
+        { texto, userId: contato, nome },
         { headers: { "X-API-Key": KEY } }
       );
       return "Muito obrigado, nossa equipe vai avaliar sua sugestão!";

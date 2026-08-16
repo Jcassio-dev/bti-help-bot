@@ -13,6 +13,7 @@ interface SugestaoDTO {
   id: number;
   texto: string;
   userId: string | null;
+  nome: string | null;
   criadoEm: string;
 }
 
@@ -43,10 +44,19 @@ export default class SugestoesCommand extends BaseCommand {
         return "Nenhuma sugestão registrada ainda.";
       }
       const linhas = data.slice(0, 30).map((s, i) => {
-        const dia = new Date(s.criadoEm).toLocaleDateString("pt-BR");
-        return `${i + 1}. ${s.texto} _(${dia})_`;
+        const quando = new Date(s.criadoEm).toLocaleString("pt-BR", {
+          dateStyle: "short",
+          timeStyle: "short",
+          timeZone: "America/Recife",
+        });
+        const contato = s.userId
+          ? s.nome
+            ? `${s.nome} - ${s.userId}`
+            : s.userId
+          : "Anônimo";
+        return `*${i + 1} - ${contato}* _(${quando})_\n${s.texto}`;
       });
-      return `*Backlog de sugestões* (${data.length})\n\n${linhas.join("\n")}`;
+      return `*Backlog de sugestões* (${data.length})\n\n${linhas.join("\n\n")}`;
     } catch (error) {
       return "Ops, não consegui listar as sugestões agora.";
     }
