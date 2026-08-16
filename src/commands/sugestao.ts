@@ -40,18 +40,18 @@ export default class SugestaoCommand extends BaseCommand {
 
     if (sub === "cancelar") {
       this.pendentes.delete(userId);
-      return "Beleza, descartei a sugestão.";
+      return "Beleza, nem queria mesmo...";
     }
 
     const texto = args.join(" ").trim();
     if (texto.length < 3) {
-      return "Manda a sugestão junto! Ex: *!sgt adiciona um comando de horário do ônibus*";
+      return "Manda a sugestão junto! Ex: *!sgt adiciona um comando que aumenta o IRA*";
     }
 
     this.pendentes.set(userId, { texto, ts: Date.now() });
     return (
       `Vou salvar a sugestão:\n\n_"${texto}"_\n\n` +
-      `Confirma? Responda *!sgt sim* (registra seu contato), *!sgt nao* (anônimo) ou *!sgt cancelar*.`
+      `Confirma? Responda > *!sgt sim* (registra seu contato) \n>*!sgt nao* (anônimo)\n>*!sgt cancelar*.`
     );
   }
 
@@ -66,9 +66,9 @@ export default class SugestaoCommand extends BaseCommand {
         { texto, userId: contato, nome },
         { headers: { "X-API-Key": KEY } }
       );
-      return "Muito obrigado, nossa equipe vai avaliar sua sugestão!";
+      return "Muito obrigado, nossa equipe (1 pessoa) vai avaliar sua sugestão!";
     } catch (error) {
-      return "Ops, não consegui registrar agora. Tenta de novo em instantes.";
+      return "Ops, não consegui registrar agora. Tenta de novo depois.";
     }
   }
 }
