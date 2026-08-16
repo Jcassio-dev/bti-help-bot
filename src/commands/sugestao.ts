@@ -21,7 +21,25 @@ export default class SugestaoCommand extends BaseCommand {
     args: string[],
     _allCommands?: Map<string, BaseCommand>
   ): Promise<AnyMessageContent | string | null | undefined> {
-    const userId = msg.key.participant || msg.key.remoteJid || "";
+    const isGroup = (msg.key.remoteJid || "").endsWith("@g.us");
+    const anyKey = msg.key as any;
+    const userId = isGroup
+      ? anyKey.participantPn || msg.key.participant || ""
+      : anyKey.remoteJidAlt || msg.key.remoteJid || "";
+
+    console.log(
+      "[SGT]",
+      JSON.stringify({
+        remoteJid: msg.key.remoteJid,
+        participant: msg.key.participant,
+        participantPn: anyKey.participantPn,
+        remoteJidAlt: anyKey.remoteJidAlt,
+        isGroup,
+        userId,
+        pushName: msg.pushName,
+      })
+    );
+
     const sub = (args[0] || "").toLowerCase();
 
     if (sub === "sim" || sub === "nao" || sub === "não") {
