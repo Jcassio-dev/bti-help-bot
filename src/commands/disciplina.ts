@@ -1,11 +1,9 @@
 import { AnyMessageContent, WAMessage, WASocket } from "baileys";
 import { BaseCommand } from "../types/command";
 import {
-  ehMemorial,
   emoji,
   fetchAprovacao,
   link,
-  MEMORIAL_TEXTO,
   nomeDocente,
   pct,
   renderGrouped,
@@ -58,9 +56,7 @@ export default class DisciplinaCommand extends BaseCommand {
           ? `_Muitas matérias — refine com o número, ex:_ *!disciplina ${termo} 1*\n\n*Ver todos e filtrar no site:*\n${link("disciplina", termo)}`
           : `*Ver todos e filtrar no site:*\n${link("disciplina", termo)}`;
 
-      const homenagem = items.some((i) => ehMemorial(i.docenteNome)) ? `\n\n${MEMORIAL_TEXTO}` : "";
-
-      return `*Aprovação entre alunos dos cursos de computação*\n\n${body}${homenagem}\n\n${rodape}`;
+      return `*Aprovação entre alunos dos cursos de computação*\n\n${body}\n\n${rodape}`;
     } catch (error) {
       return "Ops, não consegui consultar a taxa agora. Tenta de novo em instantes.";
     }
