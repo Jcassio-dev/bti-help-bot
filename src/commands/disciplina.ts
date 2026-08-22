@@ -43,7 +43,7 @@ export default class DisciplinaCommand extends BaseCommand {
       const body = renderGrouped(
         items,
         (i) => i.componenteNome ?? "(sem nome)",
-        (i) => `${emoji(i.taxa)} *${pct(i.taxa)}%* ${nomeDocente(i.docenteNome)} (${i.total} alunos)`,
+        (i) => `${emoji(i.taxaAprovacao)} *${pct(i.taxaAprovacao)}%* ${nomeDocente(i.docenteNome)} (${i.totalMatriculados} alunos)`,
         maxGroups,
         maxPerGroup,
         ["professor", "professores"],

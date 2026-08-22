@@ -44,7 +44,7 @@ export default class ProfessorCommand extends BaseCommand {
       const body = renderGrouped(
         items,
         (i) => nomeDocente(i.docenteNome),
-        (i) => `${emoji(i.taxa)} *${pct(i.taxa)}%* ${i.componenteNome ?? "(sem nome)"} (${i.total} alunos)`,
+        (i) => `${emoji(i.taxaAprovacao)} *${pct(i.taxaAprovacao)}%* ${i.componenteNome ?? "(sem nome)"} (${i.totalMatriculados} alunos)`,
         maxGroups,
         maxPerGroup,
         ["disciplina", "disciplinas"],

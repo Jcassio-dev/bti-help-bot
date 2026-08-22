@@ -6,9 +6,12 @@ export interface AprovacaoItem {
   componenteNome: string | null;
   docenteNome: string | null;
   aprovados: number;
-  reprovados: number;
-  total: number;
-  taxa: number; // 0..1
+  reprovadosNota: number;
+  reprovadosFalta: number;
+  trancados: number;
+  totalAvaliados: number;
+  totalMatriculados: number;
+  taxaAprovacao: number; // 0..1
 }
 
 const API = process.env.API_BASE_URL || "http://localhost:8080";
