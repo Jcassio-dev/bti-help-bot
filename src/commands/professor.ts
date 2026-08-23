@@ -9,8 +9,9 @@ import {
   MEMORIAL_TEXTO,
   ehMemorial,
   nomeDocente,
-  tabela,
+  listaAprovacao,
 } from "../utils/aprovacao";
+import { tituloCase } from "../utils/titulo";
 
 export default class ProfessorCommand extends BaseCommand {
   name = "professor";
@@ -64,7 +65,7 @@ export default class ProfessorCommand extends BaseCommand {
 
       const nome = nomes[0];
       const turmas = grupos.get(nome)!;
-      const corpo = tabela(turmas, (i) => i.componenteNome ?? "(sem nome)", limite);
+      const corpo = listaAprovacao(turmas, (i) => tituloCase(i.componenteNome) || "(sem nome)", limite);
       const sobra = turmas.length - limite;
       const resto = sobra > 0 ? `\n_e mais ${sobra} disciplina${sobra === 1 ? "" : "s"}_` : "";
       const slug = turmas[0].docenteSlug;

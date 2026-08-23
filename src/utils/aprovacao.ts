@@ -1,4 +1,5 @@
 import axios from "axios";
+import { tituloCase } from "./titulo";
 
 export interface AprovacaoItem {
   componenteId: number;
@@ -39,28 +40,25 @@ export function linkTurma(codigo: string): string {
   return `${DASHBOARD}/turma/${encodeURIComponent(codigo)}`;
 }
 
-/** Coluna alinhada so existe dentro do bloco mono do WhatsApp. */
-export function blocoMono(linhas: string[]): string {
-  return "```\n" + linhas.join("\n") + "\n```";
+export function emoji(taxa: number): string {
+  const p = taxa * 100;
+  if (p >= 70) return "🟢";
+  if (p >= 50) return "🟡";
+  return "🔴";
 }
 
-export function tabela(
+export function listaAprovacao(
   itens: AprovacaoItem[],
   rotulo: (i: AprovacaoItem) => string,
   limite: number
 ): string {
   const usados = itens.slice(0, limite);
-  const largura = Math.max(...usados.map((i) => String(i.totalMatriculados).length), 1);
-  return blocoMono(
-    usados.map((i) => {
-      const taxa = `${pct(i.taxaAprovacao)}%`.padStart(4);
-      const n = String(i.totalMatriculados).padStart(largura);
-      return `${taxa} | ${n} | ${rotulo(i)}`;
-    })
-  );
+  return usados
+    .map((i) => `${emoji(i.taxaAprovacao)} *${pct(i.taxaAprovacao)}%* ${rotulo(i)} (${i.totalMatriculados} alunos)`)
+    .join("\n");
 }
 
-export const LEGENDA = "_taxa = aprovados ÷ (aprovados + reprovados). n = alunos matriculados._";
+export const LEGENDA = "_Taxa entre quem foi avaliado; quem trancou conta nos alunos._";
 
 export function pct(taxa: number): number {
   return Math.round(taxa * 100);
@@ -73,7 +71,7 @@ export function ehMemorial(nome?: string | null): boolean {
 }
 
 export function nomeDocente(nome?: string | null): string {
-  const n = nome ?? "(não informado)";
+  const n = tituloCase(nome) || "(não informado)";
   return ehMemorial(n) ? `🕊️ ${n} (1993 - 2026)` : n;
 }
 

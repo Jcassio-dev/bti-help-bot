@@ -7,8 +7,9 @@ import {
   linkBusca,
   linkTurma,
   nomeDocente,
-  tabela,
+  listaAprovacao,
 } from "../utils/aprovacao";
+import { tituloCase } from "../utils/titulo";
 
 export default class TurmaCommand extends BaseCommand {
   name = "turma";
@@ -54,7 +55,7 @@ export default class TurmaCommand extends BaseCommand {
           .slice(0, 5)
           .map((n) => {
             const codigo = grupos.get(n)![0].componenteCodigo ?? "";
-            return `• ${codigo} ${n}`;
+            return `• *${codigo}* ${tituloCase(n)}`;
           })
           .join("\n");
         return (
@@ -63,10 +64,10 @@ export default class TurmaCommand extends BaseCommand {
         );
       }
 
-      const nome = nomes[0];
-      const turmas = grupos.get(nome)!;
+      const nome = tituloCase(nomes[0]);
+      const turmas = grupos.get(nomes[0])!;
       const codigo = turmas[0].componenteCodigo ?? "";
-      const corpo = tabela(turmas, (i) => nomeDocente(i.docenteNome), limite);
+      const corpo = listaAprovacao(turmas, (i) => nomeDocente(i.docenteNome), limite);
       const sobra = turmas.length - limite;
       const resto = sobra > 0 ? `\n_e mais ${sobra} professor${sobra === 1 ? "" : "es"}_` : "";
       const url = codigo ? linkTurma(codigo) : linkBusca(termo);
