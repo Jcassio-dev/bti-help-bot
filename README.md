@@ -12,44 +12,64 @@ Bot de WhatsApp desenvolvido para auxiliar estudantes do **Bacharelado em Tecnol
 
 ---
 
-## ✨ Funcionalidades
+## ✨ Comandos
 
-O bot oferece diversos comandos úteis para o dia a dia acadêmico:
+Lista gerada a partir de `src/commands/`. Todo comando aceita o prefixo `!`.
 
-### 📚 Informações Acadêmicas
+### Aprovação de professores e disciplinas
 
-- **`!grade <tipo>`** - Visualize a grade curricular (cc, es, bia, integral, noturno)
-- **`!calendario`** - Confira o calendário acadêmico 2026
-- **`!horarios <turno>`** - Veja os horários de aula (matutino, vespertino, noturno)
-- **`!faltas`** - Calcule o limite de faltas por carga horária
-- **`!pes <área>`** - Informações sobre certificados PES (ia, dados, jogos, iot, inov, edu, bio)
+| Comando | Apelidos | Descrição |
+| --- | --- | --- |
+| `!professor` | `!prof` | Taxa de aprovação de um professor por disciplina. Uso: !professor &lt;nome&gt; |
+| `!turma` | `!disciplina`, `!aprovacao`, `!aprovação`, `!taxa` | Taxa de aprovação por professor numa disciplina. Uso: !turma calculo 1 |
 
-### 🚌 Mobilidade
+### Informações acadêmicas
 
-- **`!circular`** - Horários do circular universitário
+| Comando | Apelidos | Descrição |
+| --- | --- | --- |
+| `!grade` | `!grades`, `!curricular` | Envia a imagem da grade curricular especificada. |
+| `!calendario` | `!cal`, `!acad` | Envia o arquivo do calendário acadêmico. |
+| `!horarios` | `!turno`, `!horario`, `!h`, `!turnos` | Exibe os horários dos turnos disponíveis. |
+| `!faltas` | `!faltas`, `!faltaspermitidas`, `!faltaslimite`, `!f` | responde com o número limite de faltas permitidas |
+| `!pes` | — | Informa a grade necessária para conseguir o certificado de cada PES. _(só no privado)_ |
+| `!calculadora` | `!calc`, `!calcular`, `!media`, `!previsao`, `!reposicao` | Calcula média, previsão de nota para N3 ou nota necessária na reposição. |
+| `!feriados` | `!feriado`, `!holidays` | Lista feriados restantes de 2026 |
 
-### 📢 Oportunidades
+### Dia a dia no campus
 
-- **`!jobs`** - Vagas disponíveis no Jerimum Jobs
-- **`!editais`** - Editais abertos do Metrópole Digital
+| Comando | Apelidos | Descrição |
+| --- | --- | --- |
+| `!ru` | `!cardapio`, `!rurefeicao` | Mostra o cardapio do RU UFRN para hoje. |
+| `!circular` | `!circ`, `!onibus`, `!horariocircular` | Envia a imagem dos horários do circular. |
+| `!secretaria` | — | Envia o contato da secretaria. |
+| `!links` | `!link`, `!comunidade`, `!grupo` | Retorna links relacionados à comunidade do BTI |
 
-### 📅 Datas Importantes
+### Oportunidades
 
-- **`!feriados`** - Próximos feriados de 2026
+| Comando | Apelidos | Descrição |
+| --- | --- | --- |
+| `!jobs` | `!jerimum`, `!vagas`, `!jerimumjobs` | Lista vagas de emprego do Jerimum Jobs. _(só no privado)_ |
+| `!editais` | `!bolsas`, `!metropole` | Lista editais do portal Metrópole Digital. _(só no privado)_ |
 
-### 📞 Contatos
+### Sobre o bot
 
-- **`!secretaria`** - Contato da secretaria do BTI
-- **`!links`** - Links úteis da comunidade BTI
+| Comando | Apelidos | Descrição |
+| --- | --- | --- |
+| `!menu` | `!ajuda`, `!comandos`, `!help` | Mostra a lista de comandos disponíveis. |
+| `!uso` | `!eu`, `!chamadas` | Faz uma requisição no servidor e vê quantos comandos você já usou. _(só no privado)_ |
+| `!dashboard` | `!painel`, `!dash` | Retorna o link para o painel geral do bot. |
+| `!ping` | `!p` | Responde com Pong! |
+| `!repositorio` | `!repo`, `!github`, `!source`, `!sourcecode`, `!code`, `!codigo`, `!star` | Manda o link do repositório do bot |
+| `!sugestao` | `!sgt`, `!sugestão`, `!feedback`, `!ideia` | Envie uma sugestão ou ideia pro bot. Uso: !sgt &lt;sua ideia&gt; _(só no privado)_ |
 
-### 📊 Sistema
+### Moderação
 
-- **`!uso`** - Veja quantos comandos você já usou
-- **`!dashboard`** - Acesse o painel de estatísticas do bot
-- **`!menu`** - Lista todos os comandos disponíveis
-- **`!ping`** - Teste se o bot está online
-- **`!repo`** - Repositório do projeto no GitHub
+| Comando | Apelidos | Descrição |
+| --- | --- | --- |
+| `!aviso` | — | Envia um aviso (restrito a moderadores). |
+| `!sugestoes` | `!sugestões`, `!backlog` | Lista as sugestões (moderadores). |
 
+Os comandos `aviso`, `dashboard`, `ping`, `sugestoes`, `uso` não entram nas métricas de uso, porque têm `loggable = false`.
 ---
 
 ## 🚀 Como Rodar Localmente
