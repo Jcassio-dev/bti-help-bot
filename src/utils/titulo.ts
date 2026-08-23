@@ -1,6 +1,6 @@
 const CONECTIVOS = new Set([
   "de", "da", "do", "das", "dos", "e", "em", "no", "na", "nos", "nas",
-  "a", "o", "as", "os", "ao", "aos", "para", "com", "por", "sob", "sobre",
+  "a", "o", "as", "os", "ao", "aos", "à", "às", "á", "para", "com", "por", "sob", "sobre",
 ]);
 
 const ROMANO = /^(?:i{1,3}|iv|vi{0,3}|ix|xi{0,3})$/;
