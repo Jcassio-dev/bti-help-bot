@@ -39,7 +39,10 @@ export default class ProfessorCommand extends BaseCommand {
     try {
       const items = await fetchAprovacao("docente", termo);
       if (items.length === 0) {
-        return `Não achei professor com *"${termo}"*.\nTente o sobrenome: ${linkBusca(termo)}`;
+        return (
+          `Não achei professor com *"${termo}"*.\n` +
+          `Tente só o sobrenome.\n${linkBusca(termo)}`
+        );
       }
 
       const grupos = new Map<string, AprovacaoItem[]>();

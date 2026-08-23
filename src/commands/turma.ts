@@ -29,7 +29,7 @@ export default class TurmaCommand extends BaseCommand {
 
     if (!termo) {
       return (
-        `Consulta a aprovação por professor numa disciplina. Ex: *!turma calculo 1*\n` +
+        `Consulta a aprovação por professor numa disciplina. Ex: *!turma calculo 1* ou *!turma mat0031*\n` +
         `Ou navegue por todas: ${linkBusca("")}`
       );
     }
@@ -37,7 +37,10 @@ export default class TurmaCommand extends BaseCommand {
     try {
       const items = await fetchAprovacao("disciplina", termo);
       if (items.length === 0) {
-        return `Não achei disciplina com *"${termo}"*.\nTente o código: ${linkBusca(termo)}`;
+        return (
+          `Não achei disciplina com *"${termo}"*.\n` +
+          `Tente o código (ex: *MAT0031*) ou parte do nome.\n${linkBusca(termo)}`
+        );
       }
 
       const grupos = new Map<string, AprovacaoItem[]>();
