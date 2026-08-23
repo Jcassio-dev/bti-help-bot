@@ -14,6 +14,6 @@ export default class DashboardCommand extends BaseCommand {
     _args: string[],
     _allCommands?: Map<string, BaseCommand>
   ): Promise<AnyMessageContent | string | null | undefined> {
-    return `Para ver o uso geral do bot acesse: https://bti-hp-dashboard.vercel.app/`;
+    return `Para ver o uso geral do bot acesse: https://bti-hp-dashboard.vercel.app/bot`;
   }
 }

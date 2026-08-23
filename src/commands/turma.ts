@@ -5,17 +5,15 @@ import {
   LEGENDA,
   fetchAprovacao,
   linkBusca,
-  linkProfessor,
-  MEMORIAL_TEXTO,
-  ehMemorial,
+  linkTurma,
   nomeDocente,
   tabela,
 } from "../utils/aprovacao";
 
-export default class ProfessorCommand extends BaseCommand {
-  name = "professor";
-  description = "Taxa de aprovação de um professor por disciplina. Uso: !professor <nome>";
-  aliases = ["prof"];
+export default class TurmaCommand extends BaseCommand {
+  name = "turma";
+  description = "Taxa de aprovação por professor numa disciplina. Uso: !turma calculo 1";
+  aliases = ["disciplina", "aprovacao", "aprovação", "taxa"];
   privateRestricted = false;
   loggable = true;
 
@@ -30,20 +28,20 @@ export default class ProfessorCommand extends BaseCommand {
 
     if (!termo) {
       return (
-        `Consulta a aprovação de um professor. Ex: *!professor maxwell*\n` +
-        `Ou navegue por todos: ${linkBusca("")}`
+        `Consulta a aprovação por professor numa disciplina. Ex: *!turma calculo 1*\n` +
+        `Ou navegue por todas: ${linkBusca("")}`
       );
     }
 
     try {
-      const items = await fetchAprovacao("docente", termo);
+      const items = await fetchAprovacao("disciplina", termo);
       if (items.length === 0) {
-        return `Não achei professor com *"${termo}"*.\nTente o sobrenome: ${linkBusca(termo)}`;
+        return `Não achei disciplina com *"${termo}"*.\nTente o código: ${linkBusca(termo)}`;
       }
 
       const grupos = new Map<string, AprovacaoItem[]>();
       for (const i of items) {
-        const chave = i.docenteNome ?? "";
+        const chave = i.componenteNome ?? "";
         if (!grupos.has(chave)) grupos.set(chave, []);
         grupos.get(chave)!.push(i);
       }
@@ -54,33 +52,34 @@ export default class ProfessorCommand extends BaseCommand {
       if (nomes.length > 1) {
         const resumo = nomes
           .slice(0, 5)
-          .map((n) => `• ${nomeDocente(n)} (${grupos.get(n)!.length} disciplinas)`)
+          .map((n) => {
+            const codigo = grupos.get(n)![0].componenteCodigo ?? "";
+            return `• ${codigo} ${n}`;
+          })
           .join("\n");
         return (
-          `Achei ${nomes.length} professores com *"${termo}"*.\n\n${resumo}\n\n` +
-          `Refine com o sobrenome, ou veja no site:\n${linkBusca(termo)}`
+          `Achei ${nomes.length} disciplinas com *"${termo}"*.\n\n${resumo}\n\n` +
+          `Refine com o número (ex: *${termo} 1*), ou veja no site:\n${linkBusca(termo)}`
         );
       }
 
       const nome = nomes[0];
       const turmas = grupos.get(nome)!;
-      const corpo = tabela(turmas, (i) => i.componenteNome ?? "(sem nome)", limite);
+      const codigo = turmas[0].componenteCodigo ?? "";
+      const corpo = tabela(turmas, (i) => nomeDocente(i.docenteNome), limite);
       const sobra = turmas.length - limite;
-      const resto = sobra > 0 ? `\n_e mais ${sobra} disciplina${sobra === 1 ? "" : "s"}_` : "";
-      const slug = turmas[0].docenteSlug;
-      const url = slug ? linkProfessor(slug) : linkBusca(termo);
-
-      const memorial = ehMemorial(nome) ? `\n${MEMORIAL_TEXTO}\n` : "";
+      const resto = sobra > 0 ? `\n_e mais ${sobra} professor${sobra === 1 ? "" : "es"}_` : "";
+      const url = codigo ? linkTurma(codigo) : linkBusca(termo);
 
       return (
-        `*${nomeDocente(nome)}*\n` +
+        `*${codigo} ${nome}*\n` +
         `Aprovação entre alunos dos cursos de computação, últimos 10 semestres.\n\n` +
         `${corpo}${resto}\n` +
-        `${LEGENDA}\n${memorial}\n` +
+        `${LEGENDA}\n\n` +
         `${url}`
       );
     } catch (error) {
-      return "Ops, não consegui consultar a taxa agora. Tenta de novo em instantes.";
+      return "Ops, não consegui consultar a taxa agora. Tenta de novo depois.";
     }
   }
 }

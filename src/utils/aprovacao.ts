@@ -5,6 +5,7 @@ export interface AprovacaoItem {
   componenteCodigo: string | null;
   componenteNome: string | null;
   docenteNome: string | null;
+  docenteSlug: string | null;
   aprovados: number;
   reprovadosNota: number;
   reprovadosFalta: number;
@@ -25,20 +26,44 @@ export async function fetchAprovacao(
   return data as AprovacaoItem[];
 }
 
-export function link(param: "disciplina" | "professor", termo: string): string {
-  const q = termo ? `?${param}=${encodeURIComponent(termo)}` : "";
-  return `${DASHBOARD}/aprovacao${q}`;
+export function linkBusca(termo: string): string {
+  const q = termo ? `?q=${encodeURIComponent(termo)}` : "";
+  return `${DASHBOARD}/${q}`;
 }
+
+export function linkProfessor(slug: string): string {
+  return `${DASHBOARD}/professor/${slug}`;
+}
+
+export function linkTurma(codigo: string): string {
+  return `${DASHBOARD}/turma/${encodeURIComponent(codigo)}`;
+}
+
+/** Coluna alinhada so existe dentro do bloco mono do WhatsApp. */
+export function blocoMono(linhas: string[]): string {
+  return "```\n" + linhas.join("\n") + "\n```";
+}
+
+export function tabela(
+  itens: AprovacaoItem[],
+  rotulo: (i: AprovacaoItem) => string,
+  limite: number
+): string {
+  const usados = itens.slice(0, limite);
+  const largura = Math.max(...usados.map((i) => String(i.totalMatriculados).length), 1);
+  return blocoMono(
+    usados.map((i) => {
+      const taxa = `${pct(i.taxaAprovacao)}%`.padStart(4);
+      const n = String(i.totalMatriculados).padStart(largura);
+      return `${taxa} | ${n} | ${rotulo(i)}`;
+    })
+  );
+}
+
+export const LEGENDA = "_taxa = aprovados ÷ (aprovados + reprovados). n = alunos matriculados._";
 
 export function pct(taxa: number): number {
   return Math.round(taxa * 100);
-}
-
-export function emoji(taxa: number): string {
-  const p = taxa * 100;
-  if (p >= 70) return "🟢";
-  if (p >= 50) return "🟡";
-  return "🔴";
 }
 
 const MELHOR_PROFESSOR_QUE_O_IMD_TEVE = "maxwell gomes da silva";
@@ -56,51 +81,3 @@ export const MEMORIAL_TEXTO =
   `🕊️ *In Memoriam de Maxwell Gomes da Silva (1993 - 2026)*\n\n` +
   `Professor querido do BTI, pai e esposo dedicado, sempre lembrado pelo cuidado com cada aluno e cada turma.\n` +
   `Que estas aprovações contem um pouco do educador que ele foi.`;
-
-export function textoHomenagemProfessor(nome?: string | null): string {
-  return ehMemorial(nome)
-    ? `${MEMORIAL_TEXTO}`
-    : "*Aprovação entre alunos dos cursos de computação*";
-}
-
-function conta(n: number, formas: [string, string]): string {
-  return `${n} ${n === 1 ? formas[0] : formas[1]}`;
-}
-
-export function renderGrouped(
-  items: AprovacaoItem[],
-  keyOf: (i: AprovacaoItem) => string,
-  lineOf: (i: AprovacaoItem) => string,
-  maxGroups: number,
-  maxPerGroup: number,
-  itemFormas: [string, string],
-  grupoFormas: [string, string]
-): string {
-  const groups = new Map<string, AprovacaoItem[]>();
-  for (const it of items) {
-    const k = keyOf(it) || "—";
-    if (!groups.has(k)) groups.set(k, []);
-    groups.get(k)!.push(it);
-  }
-
-  const chaves = Array.from(groups.keys());
-  const parts: string[] = [];
-
-  for (const k of chaves.slice(0, maxGroups)) {
-    const list = groups.get(k)!;
-    const lines = list.slice(0, maxPerGroup).map(lineOf);
-    const sobra = list.length - maxPerGroup;
-    if (sobra > 0) {
-      lines.push(`_...e mais ${conta(sobra, itemFormas)}_`);
-    }
-    parts.push(`*${k}*\n${lines.join("\n")}`);
-  }
-
-  let body = parts.join("\n\n");
-
-  const sobraGrupos = chaves.length - Math.min(chaves.length, maxGroups);
-  if (sobraGrupos > 0) {
-    body += `\n\n_e mais ${conta(sobraGrupos, grupoFormas)}_`;
-  }
-  return body;
-}

@@ -30,7 +30,7 @@ export default class UsoCommand extends BaseCommand {
           },
         }
       );
-      return `Você já enviou ${commandCount} comandos. \n para ver o uso geral acesse: https://bti-hp-dashboard.vercel.app/\n\n _OBS.: desde 17/08/2025 :D_`;
+      return `Você já enviou ${commandCount} comandos. \n para ver o uso geral acesse: https://bti-hp-dashboard.vercel.app/bot\n\n _OBS.: desde 17/08/2025 :D_`;
     } catch (error) {
       console.error("Erro ao buscar contagem de comandos:", error);
       return "Ocorreu um erro ao buscar sua contagem de comandos.";
