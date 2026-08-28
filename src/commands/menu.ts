@@ -23,7 +23,7 @@ export default class MenuCommand extends BaseCommand {
     const uniqueCommands = new Set<BaseCommand>(allCommands.values());
 
     for (const cmd of Array.from(uniqueCommands)) {
-      if (cmd.name === "menu" || cmd.hidden) continue;
+      if (cmd.name === "menu" || cmd.hidden || (cmd.acesso && cmd.acesso !== "todos")) continue;
       menuText += `• *!${cmd.name}*: ${cmd.description || "Sem descrição."}\n`;
     }
 

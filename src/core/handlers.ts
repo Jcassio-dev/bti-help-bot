@@ -6,6 +6,7 @@ import { CommandFactory } from "../factories/command.factory";
 import { parseMessage } from "../utils/message-parser";
 import { UserValidator } from "../utils/user-validator";
 import { validateMessageContext } from "../utils/message-validator";
+import { podeUsar, remetente } from "../core/permissoes";
 import { logger } from "../services/logger.service";
 
 export async function handleMessages(
@@ -102,6 +103,11 @@ export async function handleMessages(
 
     const messageContext = validateMessageContext(msg, command);
     const subCommand = args[0]?.toLowerCase();
+
+    if (!podeUsar(command.acesso, remetente(msg))) {
+      logger.info({ command: command.name, user: messageContext.userId }, "Acesso negado a comando restrito");
+      return;
+    }
 
     const validation = userValidator.validateUser(
       messageContext.userId,

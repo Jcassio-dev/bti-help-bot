@@ -1,4 +1,5 @@
 import { AnyMessageContent, WAMessage, WASocket } from "baileys";
+import { Nivel } from "../core/permissoes";
 
 export abstract class BaseCommand {
   public abstract name: string;
@@ -7,6 +8,8 @@ export abstract class BaseCommand {
   public abstract privateRestricted?: boolean;
   public abstract loggable?: boolean;
   public hidden?: boolean;
+  /** Quem pode usar. Ausente = todos. "tester" e "admin" checados contra as listas do .env. */
+  public acesso?: Nivel;
 
   public abstract execute(
     sock: WASocket,

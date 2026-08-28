@@ -1,13 +1,10 @@
 import axios from "axios";
 import { AnyMessageContent, WAMessage, WASocket } from "baileys";
 import { BaseCommand } from "../types/command";
+import { ehAdmin, remetente } from "../core/permissoes";
 
 const API = process.env.API_BASE_URL || "http://localhost:8080";
 const KEY = process.env.API_SECRET_KEY;
-const ADMIN_IDS = (process.env.ADMIN_IDS || "")
-  .split(",")
-  .map((s) => s.trim())
-  .filter(Boolean);
 
 interface SugestaoDTO {
   id: number;
@@ -23,6 +20,7 @@ export default class SugestoesCommand extends BaseCommand {
   aliases = ["sugestões", "backlog"];
   privateRestricted = false;
   loggable = false;
+  acesso: "admin" = "admin";
   hidden = true;
 
   async execute(
@@ -31,8 +29,8 @@ export default class SugestoesCommand extends BaseCommand {
     _args: string[],
     _allCommands?: Map<string, BaseCommand>
   ): Promise<AnyMessageContent | string | null | undefined> {
-    const sender = (msg.key.participant || msg.key.remoteJid || "").split("@")[0];
-    if (ADMIN_IDS.length === 0 || !ADMIN_IDS.includes(sender)) {
+    const sender = remetente(msg);
+    if (!ehAdmin(sender)) {
       return "Comando restrito a moderadores.";
     }
 

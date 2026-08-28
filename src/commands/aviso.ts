@@ -1,10 +1,7 @@
 import { WAMessage, WASocket } from "baileys";
 import { BaseCommand } from "../types/command";
+import { ehAdmin, remetente } from "../core/permissoes";
 
-const ADMIN_IDS = (process.env.ADMIN_IDS || "")
-  .split(",")
-  .map((s) => s.trim())
-  .filter(Boolean);
 
 const EXPIRA_MS = 5 * 60 * 1000;
 const DELAY_MS = 1500;
@@ -15,6 +12,7 @@ export default class AvisoCommand extends BaseCommand {
   aliases = [];
   privateRestricted = false;
   loggable = false;
+  acesso: "admin" = "admin";
   hidden = true;
 
   private pendentes = new Map<string, { texto: string; ts: number }>();
@@ -25,8 +23,8 @@ export default class AvisoCommand extends BaseCommand {
     _args: string[],
     _allCommands?: Map<string, BaseCommand>
   ): Promise<string> {
-    const sender = (msg.key.participant || msg.key.remoteJid || "").split("@")[0];
-    if (ADMIN_IDS.length === 0 || !ADMIN_IDS.includes(sender)) {
+    const sender = remetente(msg);
+    if (!ehAdmin(sender)) {
       return "Comando restrito a moderadores.";
     }
 
