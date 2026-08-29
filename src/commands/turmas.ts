@@ -1,11 +1,11 @@
 import { AnyMessageContent, WAMessage, WASocket } from "baileys";
 import { BaseCommand } from "../types/command";
-import { buscarTurmas, horarioLegivel, precisaConectar } from "../utils/sigaa";
+import { agenda, buscarTurmas, nomeDia, precisaConectar } from "../utils/sigaa";
 
 export default class TurmasCommand extends BaseCommand {
   name = "turmas";
-  description = "Suas turmas do semestre no SIGAA, com horário.";
-  aliases = ["minhasturmas"];
+  description = "Sua agenda de turmas do semestre no SIGAA.";
+  aliases = ["minhasturmas", "agenda"];
   privateRestricted = true;
   loggable = false;
   acesso: "tester" = "tester";
@@ -25,12 +25,24 @@ export default class TurmasCommand extends BaseCommand {
       if (turmas.length === 0) {
         return "Não achei turmas neste semestre. Se acabou de se matricular, tenta *!atualizar*.";
       }
-      const linhas = turmas.map((t) => {
-        const cod = t.codigo ? `*${t.codigo}* ` : "";
-        const local = t.local ? ` — ${t.local}` : "";
-        return `${cod}${t.nome}\n  ${horarioLegivel(t.horario)}${local}`;
-      });
-      return `*Suas turmas do semestre*\n\n${linhas.join("\n\n")}\n\n_Fonte: SIGAA. Atualize com !atualizar._`;
+
+      const { dias, online } = agenda(turmas);
+      const partes: string[] = [];
+
+      for (const [dia, lista] of dias) {
+        const linhas = lista.map((e) => {
+          const nome = e.nota ? `${e.nome} _(${e.nota})_` : e.nome;
+          const local = e.local ? ` · ${e.local}` : "";
+          return `\`${e.ini}–${e.fim}\`  ${nome}${local}`;
+        });
+        partes.push(`*${nomeDia(dia)}*\n${linhas.join("\n")}`);
+      }
+
+      if (online.length) {
+        partes.push(`*Online*\n${online.map((n) => `• ${n}`).join("\n")}`);
+      }
+
+      return `*Minha agenda de turmas*\n\n${partes.join("\n\n")}\n\n_Fonte: SIGAA. Atualize com !atualizar._`;
     } catch (e) {
       if (precisaConectar(e)) {
         return "Você não está conectado ao SIGAA. Use *!conectar* pra começar.";
