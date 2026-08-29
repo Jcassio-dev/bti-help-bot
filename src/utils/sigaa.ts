@@ -36,12 +36,51 @@ export interface Indice {
   nome: string;
 }
 
+export interface Nota {
+  codigo: string;
+  disciplina: string;
+  unidades: string[];
+  recuperacao: string;
+  resultado: string;
+  faltas: string;
+  situacao: string;
+}
+
+export interface Periodo {
+  periodo: string;
+  notas: Nota[];
+}
+
 export interface DadosSigaa {
   turmas: Turma[];
   indices: Indice[];
   institucional: Record<string, string>;
   integralizado: number | null;
+  boletim: Periodo[];
   atualizadoEm: string;
+}
+
+/** Ordena os periodos do mais recente pro mais antigo. "2026.1" > "2025.2". */
+export function periodosRecentes(boletim: Periodo[]): Periodo[] {
+  const peso = (p: string) => {
+    const m = /(\d{4})\.(\d)/.exec(p);
+    return m ? Number(m[1]) * 10 + Number(m[2]) : 0;
+  };
+  return [...boletim].sort((a, b) => peso(b.periodo) - peso(a.periodo));
+}
+
+/** Emoji e rotulo curto a partir da situacao crua do SIGAA. */
+export function situacaoDe(nota: Nota): { icone: string; rotulo: string; fechada: boolean } {
+  const s = (nota.situacao || "").toUpperCase();
+  if (s.includes("APROVAD")) return { icone: "✅", rotulo: "Aprovado", fechada: true };
+  if (s.includes("REPROV")) return { icone: "❌", rotulo: "Reprovado", fechada: true };
+  if (s.includes("TRANC")) return { icone: "🚫", rotulo: "Trancado", fechada: true };
+  return { icone: "📖", rotulo: "Em curso", fechada: false };
+}
+
+/** So as unidades preenchidas, juntas com ponto. Ex: ["8.5","","9.0"] -> "8.5 · 9.0". */
+export function unidades(nota: Nota): string {
+  return (nota.unidades || []).map((u) => u.trim()).filter(Boolean).join(" · ");
 }
 
 export async function buscarDados(jid: string): Promise<DadosSigaa> {
