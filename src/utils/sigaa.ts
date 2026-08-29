@@ -30,13 +30,23 @@ export async function desconectar(jid: string): Promise<void> {
   await cli.delete("/sessao", { params: { jid } });
 }
 
-export async function buscarTurmas(jid: string): Promise<Turma[]> {
-  const { data } = await cli.get("/turmas", { params: { jid } });
-  return data as Turma[];
+export interface Indice {
+  sigla: string;
+  valor: string;
+  nome: string;
 }
 
-export async function atualizar(jid: string): Promise<void> {
-  await cli.post("/atualizar", null, { params: { jid } });
+export interface DadosSigaa {
+  turmas: Turma[];
+  indices: Indice[];
+  institucional: Record<string, string>;
+  integralizado: number | null;
+  atualizadoEm: string;
+}
+
+export async function buscarDados(jid: string): Promise<DadosSigaa> {
+  const { data } = await cli.get("/dados", { params: { jid } });
+  return data as DadosSigaa;
 }
 
 export function precisaConectar(err: unknown): boolean {
@@ -138,4 +148,16 @@ export function agenda(turmas: Turma[]): { dias: [number, EntradaDia[]][]; onlin
 
 export function nomeDia(d: number): string {
   return ["", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"][d] ?? DIAS[d];
+}
+
+/** "há 2 h", "há 3 dias", "agora" a partir de um ISO. */
+export function desde(iso: string): string {
+  const ms = Date.now() - new Date(iso).getTime();
+  const min = Math.floor(ms / 60000);
+  if (min < 2) return "agora há pouco";
+  if (min < 60) return `há ${min} min`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `há ${h} h`;
+  const d = Math.floor(h / 24);
+  return `há ${d} dia${d === 1 ? "" : "s"}`;
 }
