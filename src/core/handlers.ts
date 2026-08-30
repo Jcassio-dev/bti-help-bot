@@ -143,8 +143,13 @@ export async function handleMessages(
       if (!responseContent) throw new Error("Comando não retornou conteúdo.");
       const responseIsString = typeof responseContent === "string";
 
+      const avisoPrivado =
+        messageContext.isGroupMessage && command.privateRestricted
+          ? "Esse comando é só no privado.\n\n"
+          : "";
+
       const messageToSend = responseIsString
-        ? { text: responseContent as string }
+        ? { text: avisoPrivado + (responseContent as string) }
         : (responseContent as AnyMessageContent);
 
       const strategyType = responseIsString ? "text" : "image";

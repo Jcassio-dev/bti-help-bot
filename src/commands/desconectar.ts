@@ -14,7 +14,7 @@ export default class DesconectarCommand extends BaseCommand {
     _sock: WASocket,
     msg: WAMessage
   ): Promise<AnyMessageContent | string | null | undefined> {
-    const jid = msg.key.remoteJid!;
+    const jid = msg.key.participant || msg.key.remoteJid!;
     try {
       await desconectar(jid);
       return "Desconectei sua conta e apaguei a sessão guardada. Use *!conectar* quando quiser voltar.";

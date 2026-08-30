@@ -14,12 +14,7 @@ export default class IndicesCommand extends BaseCommand {
     _sock: WASocket,
     msg: WAMessage
   ): Promise<AnyMessageContent | string | null | undefined> {
-    const isGroup = msg.key.remoteJid?.endsWith("@g.us") ?? false;
-    if (isGroup) {
-      return "Esse comando é só no privado. Me chama aqui: wa.me/558486735862";
-    }
-
-    const jid = msg.key.remoteJid!;
+    const jid = msg.key.participant || msg.key.remoteJid!;
     try {
       const dados = await buscarDados(jid);
       const val = (sigla: string) =>

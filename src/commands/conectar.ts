@@ -15,12 +15,7 @@ export default class ConectarCommand extends BaseCommand {
     msg: WAMessage,
     _args: string[]
   ): Promise<AnyMessageContent | string | null | undefined> {
-    const isGroup = msg.key.remoteJid?.endsWith("@g.us") ?? false;
-    if (isGroup) {
-      return "Esse comando é só no privado, pra sua senha não passar num grupo. Me chama aqui: wa.me/558486735862";
-    }
-
-    const jid = msg.key.remoteJid!;
+    const jid = msg.key.participant || msg.key.remoteJid!;
     try {
       if (await temSessao(jid)) {
         return "Você já está conectado. Use *!turmas* ou *!desconectar* se quiser sair.";
