@@ -22,7 +22,7 @@ export default class ConectarCommand extends BaseCommand {
       const link = await gerarLink(jid);
       return (
         `Abra este link e entre com seu login do SIGAA:\n${link}\n\n` +
-        `_O login acontece no servidor do bot, que vê a senha só na hora de abrir a sessão e não a guarda. ` +
+        `_Ninguém vê sua senha: ela é usada só no instante de abrir a sessão no SIGAA e não fica guardada em lugar nenhum, nem log, nem banco. ` +
         `O link vale por 10 minutos. Projeto não oficial da UFRN._`
       );
     } catch (e) {

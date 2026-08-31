@@ -62,28 +62,28 @@ export default class NotasCommand extends BaseCommand {
 
   private periodo(p: Periodo): string {
     const blocos = p.notas.map((n) => {
-      const { icone, rotulo, fechada } = situacaoDe(n);
-      const linhas = [`${icone} *${n.disciplina}*`];
+      const { rotulo, fechada } = situacaoDe(n);
+      const linhas = [`*${n.disciplina}*`];
       const u = unidades(n);
       if (u) linhas.push(`Unidades: ${u}`);
       if (n.recuperacao?.trim()) linhas.push(`Recuperação: ${n.recuperacao.trim()}`);
       if (fechada) {
         const nota = n.resultado?.trim();
-        linhas.push(nota ? `Resultado: ${nota} — ${rotulo}` : rotulo);
+        linhas.push(nota ? `Resultado: ${nota} (${rotulo})` : rotulo);
       } else {
         linhas.push(`_${rotulo}_`);
       }
       return linhas.join("\n");
     });
-    return `*Boletim — ${p.periodo}*\n\n${blocos.join("\n\n")}`;
+    return `*Boletim ${p.periodo}*\n\n${blocos.join("\n\n")}`;
   }
 
   private historico(periodos: Periodo[]): string {
     const blocos = periodos.map((p) => {
       const itens = p.notas.map((n) => {
-        const { icone } = situacaoDe(n);
+        const { rotulo } = situacaoDe(n);
         const nota = n.resultado?.trim();
-        return `${icone} ${n.disciplina}${nota ? ` — ${nota}` : ""}`;
+        return `${n.disciplina}: ${nota || rotulo}`;
       });
       return `*${p.periodo}*\n${itens.join("\n")}`;
     });
