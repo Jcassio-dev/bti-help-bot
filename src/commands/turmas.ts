@@ -8,7 +8,6 @@ export default class TurmasCommand extends BaseCommand {
   aliases = ["minhasturmas", "agenda"];
   privateRestricted = true;
   loggable = false;
-  acesso: "tester" = "tester";
 
   async execute(
     _sock: WASocket,

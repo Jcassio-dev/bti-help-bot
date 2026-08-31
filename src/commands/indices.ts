@@ -8,7 +8,6 @@ export default class IndicesCommand extends BaseCommand {
   aliases = ["ira", "indice", "índices"];
   privateRestricted = true;
   loggable = false;
-  acesso: "tester" = "tester";
 
   async execute(
     _sock: WASocket,

@@ -8,7 +8,6 @@ export default class ConectarCommand extends BaseCommand {
   aliases = ["login", "sigaa"];
   privateRestricted = true;
   loggable = false;
-  acesso: "tester" = "tester";
 
   async execute(
     _sock: WASocket,

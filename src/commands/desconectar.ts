@@ -8,7 +8,6 @@ export default class DesconectarCommand extends BaseCommand {
   aliases = ["sair", "esquecer"];
   privateRestricted = true;
   loggable = false;
-  acesso: "tester" = "tester";
 
   async execute(
     _sock: WASocket,
