@@ -18,20 +18,29 @@ export default class MenuCommand extends BaseCommand {
       return "Desculpe, não consegui carregar a lista de comandos no momento.";
     }
 
-    let menuText = "📜 *Menu de Comandos Disponíveis:*\n\n";
-
     const uniqueCommands = new Set<BaseCommand>(allCommands.values());
 
-    for (const cmd of Array.from(uniqueCommands)) {
+    const secoes = new Map<string, BaseCommand[]>();
+    for (const cmd of uniqueCommands) {
       if (cmd.name === "menu" || cmd.hidden || (cmd.acesso && cmd.acesso !== "todos")) continue;
-      menuText += `• *!${cmd.name}*: ${cmd.description || "Sem descrição."}\n`;
+      const secao = cmd.categoria || "Geral";
+      if (!secoes.has(secao)) secoes.set(secao, []);
+      secoes.get(secao)!.push(cmd);
     }
 
-    if (
-      uniqueCommands.size <= 1 &&
-      uniqueCommands.values().next().value?.name === "menu"
-    ) {
-      menuText += "_Nenhum outro comando disponível no momento._";
+    if (secoes.size === 0) {
+      return "📜 *Menu de Comandos*\n\n_Nenhum comando disponível no momento._";
+    }
+
+    const ordem = (nome: string) => (nome === "Geral" ? 0 : nome === "SIGAA" ? 1 : 2);
+    const nomes = Array.from(secoes.keys()).sort((a, b) => ordem(a) - ordem(b) || a.localeCompare(b));
+
+    let menuText = "📜 *Menu de Comandos*\n";
+    for (const nome of nomes) {
+      menuText += `\n*${nome}*\n`;
+      for (const cmd of secoes.get(nome)!) {
+        menuText += `• *!${cmd.name}*: ${cmd.description || "Sem descrição."}\n`;
+      }
     }
 
     return menuText;

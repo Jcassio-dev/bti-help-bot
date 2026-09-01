@@ -10,6 +10,8 @@ export abstract class BaseCommand {
   public hidden?: boolean;
   /** Quem pode usar. Ausente = todos. "tester" e "admin" checados contra as listas do .env. */
   public acesso?: Nivel;
+  /** Seção do menu. Ausente = seção geral. */
+  public categoria?: string;
 
   public abstract execute(
     sock: WASocket,

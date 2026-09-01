@@ -16,6 +16,7 @@ export default class NotasCommand extends BaseCommand {
   aliases = ["boletim", "nota"];
   privateRestricted = true;
   loggable = false;
+  categoria = "SIGAA";
 
   async execute(
     _sock: WASocket,
