@@ -4,7 +4,7 @@ import { desconectar } from "../utils/sigaa";
 
 export default class DesconectarCommand extends BaseCommand {
   name = "desconectar";
-  description = "Encerra sua sessão do SIGAA e apaga os dados guardados.";
+  description = "Apaga os dados do SIGAA guardados no bot.";
   aliases = ["sair", "esquecer"];
   privateRestricted = true;
   loggable = false;
@@ -16,7 +16,7 @@ export default class DesconectarCommand extends BaseCommand {
     const jid = msg.key.participant || msg.key.remoteJid!;
     try {
       await desconectar(jid);
-      return "Desconectei sua conta e apaguei a sessão guardada. Use *!conectar* quando quiser voltar.";
+      return "Prontinho: apaguei a cópia guardada dos seus dados acadêmicos. Sessão e senha nunca são guardadas. Use *!conectar* quando quiser voltar.";
     } catch (e) {
       return "Não consegui agora. Tenta de novo em instantes.";
     }
