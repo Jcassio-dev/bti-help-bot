@@ -40,9 +40,13 @@ export default class ProfessorCommand extends BaseCommand {
     try {
       const items = await fetchAprovacao("docente", termo);
       if (items.length === 0) {
+        const cob = await fetchCobertura();
+        const aviso = cob
+          ? `\nSe for professor novo, só temos dados até ${cob.ultimoSemestre}.`
+          : "";
         return (
           `Não achei professor com *"${termo}"*.\n` +
-          `Tente só o sobrenome.\n${linkBusca(termo)}`
+          `Tente só o sobrenome.${aviso}\n${linkBusca(termo)}`
         );
       }
 
