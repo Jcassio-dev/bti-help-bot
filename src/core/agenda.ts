@@ -3,17 +3,19 @@ type Tarefa = () => Promise<void>;
 const HORA = 60 * 60 * 1000;
 const DIA = 24 * HORA;
 
-/** Roda a tarefa agora e depois toda dia no horario (hora local, UTC-3). */
-export function agendarDiario(nome: string, hora: number, tarefa: Tarefa): void {
+/** Roda a tarefa agora e depois toda dia em cada horario (hora local, UTC-3). */
+export function agendarDiario(nome: string, horas: number[], tarefa: Tarefa): void {
   const rodar = () =>
     tarefa().catch((e) => console.error(`[agenda] ${nome} falhou:`, e));
 
   rodar();
 
-  setTimeout(() => {
-    rodar();
-    setInterval(rodar, DIA);
-  }, msAteProxima(hora));
+  for (const hora of horas) {
+    setTimeout(() => {
+      rodar();
+      setInterval(rodar, DIA);
+    }, msAteProxima(hora));
+  }
 }
 
 function msAteProxima(hora: number): number {
