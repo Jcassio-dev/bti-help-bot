@@ -208,16 +208,31 @@ function formatMeal(meal: MealItems | null, label: string, time: string): string
   return text;
 }
 
+const FONTE = `\n\n_Fonte: cardápio oficial do RU no Canva da UFRN._\n${RU_URL}`;
+
 function formatDayMenu(dayAbbr: string, menu: DayMenu): string {
   const dayName = DAY_FULL[dayAbbr] ?? dayAbbr;
   if (!menu.almoco && !menu.jantar) {
-    return `*Cardapio RU UFRN - ${dayName}*\n\n_Sem cardapio cadastrado para hoje._`;
+    return `*Cardapio RU UFRN - ${dayName}*\n\n_Sem cardapio cadastrado para hoje._${FONTE}`;
   }
   let text = `*Cardapio RU UFRN - ${dayName}*\n\n`;
   text += formatMeal(menu.almoco, "Almoco", MEAL_TIMES.almoco);
   text += "\n";
   text += formatMeal(menu.jantar, "Jantar", MEAL_TIMES.jantar);
-  return text.trim();
+  return text.trim() + FONTE;
+}
+
+/** Raspa o cardapio de hoje e guarda no cache. Usado pelo job diario pra deixar o !ru pronto. */
+export async function aquecerCardapioHoje(): Promise<void> {
+  const now = new Date(Date.now() - 3 * 60 * 60 * 1000);
+  const targetDay = DAY_ABBR[now.getUTCDay()];
+  const menu = await scrapeDay(targetDay);
+  if (menu.almoco || menu.jantar) {
+    cache[targetDay] = { menu, timestamp: Date.now() };
+    console.log(`[RU] cache aquecido para ${targetDay}`);
+  } else {
+    console.warn(`[RU] aquecimento nao retornou cardapio para ${targetDay}`);
+  }
 }
 
 export default class RuCommand extends BaseCommand {
