@@ -4,6 +4,7 @@ import {
   AprovacaoItem,
   LEGENDA,
   fetchAprovacao,
+  fetchCobertura,
   linkBusca,
   linkProfessor,
   MEMORIAL_TEXTO,
@@ -76,9 +77,14 @@ export default class ProfessorCommand extends BaseCommand {
 
       const memorial = ehMemorial(nome) ? `\n${MEMORIAL_TEXTO}\n` : "";
 
+      const cobertura = await fetchCobertura();
+      const periodo = cobertura
+        ? `últimos ${cobertura.semestres} semestres, até ${cobertura.ultimoSemestre}`
+        : "últimos 10 semestres";
+
       return (
         `*${nomeDocente(nome)}*\n` +
-        `Aprovação entre alunos dos cursos de computação, últimos 10 semestres.\n\n` +
+        `Aprovação entre alunos dos cursos de computação, ${periodo}.\n\n` +
         `${corpo}${resto}\n` +
         `${LEGENDA}\n${memorial}\n` +
         `${url}`

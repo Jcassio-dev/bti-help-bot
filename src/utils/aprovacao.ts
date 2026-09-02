@@ -27,6 +27,28 @@ export async function fetchAprovacao(
   return data as AprovacaoItem[];
 }
 
+export interface Cobertura {
+  ultimoSemestre: string;
+  semestres: number;
+}
+
+let coberturaCache: Cobertura | null = null;
+
+/** Ate onde os dados vao. Best-effort e cacheado; se falhar, devolve null e quem chama omite. */
+export async function fetchCobertura(): Promise<Cobertura | null> {
+  if (coberturaCache) return coberturaCache;
+  try {
+    const { data } = await axios.get(`${API}/api/aprovacao/cobertura`);
+    if (data && data.ultimoSemestre) {
+      coberturaCache = data as Cobertura;
+      return coberturaCache;
+    }
+  } catch {
+    // sem cobertura, o professor usa o texto generico
+  }
+  return null;
+}
+
 export function linkBusca(termo: string): string {
   const q = termo ? `?q=${encodeURIComponent(termo)}` : "";
   return `${DASHBOARD}/${q}`;
