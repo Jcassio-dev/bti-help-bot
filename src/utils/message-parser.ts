@@ -1,4 +1,19 @@
+import { WAMessageContent } from "baileys";
+
 const commandPrefix = "!";
+
+export function extractMessageText(
+  message: WAMessageContent | null | undefined
+): string | undefined {
+  if (!message) return undefined;
+  return (
+    message.conversation ||
+    message.extendedTextMessage?.text ||
+    message.imageMessage?.caption ||
+    message.videoMessage?.caption ||
+    undefined
+  );
+}
 
 export interface ParsedMessage {
   commandName: string;
