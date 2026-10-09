@@ -78,6 +78,7 @@ Os comandos `aviso`, `dashboard`, `ping`, `sugestoes`, `uso` não entram nas mé
 
 - Node.js (versão 20 ou superior)
 - npm ou yarn
+- ffmpeg instalado no sistema (`apt install ffmpeg` / `brew install ffmpeg`) — necessário para o comando `!figurinha`
 - Conta do WhatsApp para conectar o bot
 
 ### Instalação
