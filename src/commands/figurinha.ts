@@ -13,6 +13,39 @@ import {
 } from "../services/sticker.service";
 import { logger } from "../services/logger.service";
 
+const MAX_DOWNLOAD_RETRIES = 3;
+const DOWNLOAD_RETRY_DELAY_MS = 1500;
+
+// O download da mídia às vezes chega truncado (observado na prática:
+// downloadMediaMessage falha com "bad decrypt" — o AES-CBC do Baileys só
+// fecha o padding no fim do stream, então um corte de rede no meio do
+// download quebra o último bloco). Vídeos maiores (ex: um vídeo salvo na
+// galeria, reenviado) demoram mais pra baixar e dão mais chance disso
+// acontecer; um vídeo gravado na hora, bem menor, quase nunca sofre esse
+// problema. Tentar de novo resolve na prática.
+export async function downloadWithRetry<T>(
+  download: () => Promise<T>,
+  maxRetries: number = MAX_DOWNLOAD_RETRIES,
+  retryDelayMs: number = DOWNLOAD_RETRY_DELAY_MS
+): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await download();
+    } catch (error) {
+      lastError = error;
+      if (attempt < maxRetries) {
+        logger.warn(
+          { error, attempt },
+          "Falha ao baixar mídia da figurinha, tentando de novo"
+        );
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+      }
+    }
+  }
+  throw lastError;
+}
+
 export interface DetectedMedia {
   type: "image" | "video";
   durationSeconds?: number;
@@ -59,14 +92,16 @@ export default class FigurinhaCommand extends BaseCommand {
     }
 
     try {
-      const buffer = await downloadMediaMessage(
-        msg,
-        "buffer",
-        {},
-        {
-          logger: logger.getRawLogger(),
-          reuploadRequest: sock.updateMediaMessage,
-        }
+      const buffer = await downloadWithRetry(() =>
+        downloadMediaMessage(
+          msg,
+          "buffer",
+          {},
+          {
+            logger: logger.getRawLogger(),
+            reuploadRequest: sock.updateMediaMessage,
+          }
+        )
       );
 
       const stickerBuffer =
@@ -80,7 +115,7 @@ export default class FigurinhaCommand extends BaseCommand {
         return "O resultado ficou grande demais para enviar como figurinha. Tenta um vídeo mais curto ou mais simples.";
       }
       logger.error({ error }, "Erro ao gerar figurinha");
-      return "Ocorreu um erro ao tentar gerar a figurinha.";
+      return "Ocorreu um erro ao tentar gerar a figurinha. Tenta de novo em alguns instantes.";
     }
   }
 }

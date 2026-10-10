@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { WAMessage, WASocket } from "baileys";
-import FigurinhaCommand, { detectMedia } from "./figurinha";
+import FigurinhaCommand, { detectMedia, downloadWithRetry } from "./figurinha";
 
 test("detectMedia retorna null quando não há mídia", () => {
   const msg = { message: {} } as WAMessage;
@@ -45,4 +45,46 @@ test("execute rejeita vídeo acima do limite sem tentar baixar nada", async () =
   } as WAMessage;
   const result = await cmd.execute({} as WASocket, msg, []);
   assert.equal(result, "O vídeo precisa ter no máximo 10 segundos.");
+});
+
+test("downloadWithRetry retorna o resultado de primeira se nao falhar", async () => {
+  let calls = 0;
+  const result = await downloadWithRetry(async () => {
+    calls++;
+    return "ok";
+  });
+  assert.equal(result, "ok");
+  assert.equal(calls, 1);
+});
+
+test("downloadWithRetry tenta de novo apos uma falha e eventualmente funciona", async () => {
+  let calls = 0;
+  const result = await downloadWithRetry(
+    async () => {
+      calls++;
+      if (calls < 2) throw new Error("bad decrypt");
+      return "ok";
+    },
+    3,
+    0
+  );
+  assert.equal(result, "ok");
+  assert.equal(calls, 2);
+});
+
+test("downloadWithRetry esgota as tentativas e lanca o ultimo erro", async () => {
+  let calls = 0;
+  await assert.rejects(
+    () =>
+      downloadWithRetry(
+        async () => {
+          calls++;
+          throw new Error(`falha ${calls}`);
+        },
+        3,
+        0
+      ),
+    /falha 3/
+  );
+  assert.equal(calls, 3);
 });
