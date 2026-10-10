@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node -r dotenv/config src/index.ts",
-    "test": "node -r ts-node/register --test \"src/**/*.test.ts\"",
+    "test": "node -r ts-node/register --test $(find src -name '*.test.ts')",
     "build": "tsc && cp -r src/resources dist/",
     "start": "node -r dotenv/config dist/index.js",
     "pm2:start": "pm2 start npm --name bti-bot -- start",

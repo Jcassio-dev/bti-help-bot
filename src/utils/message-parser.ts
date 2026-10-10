@@ -15,6 +15,15 @@ export function extractMessageText(
   );
 }
 
+export function extractCommandKey(
+  message: WAMessageContent | null | undefined
+): string {
+  const rawText = extractMessageText(message);
+  if (!rawText) return "unknown";
+  const match = rawText.match(/^!(\w+)/);
+  return match ? match[1].toLowerCase() : "unknown";
+}
+
 export interface ParsedMessage {
   commandName: string;
   args: string[];

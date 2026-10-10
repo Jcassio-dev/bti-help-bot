@@ -9,10 +9,9 @@ import {
   convertImageToSticker,
   convertVideoToSticker,
   StickerTooLargeError,
+  MAX_VIDEO_SECONDS,
 } from "../services/sticker.service";
 import { logger } from "../services/logger.service";
-
-const MAX_VIDEO_SECONDS = 10;
 
 export interface DetectedMedia {
   type: "image" | "video";

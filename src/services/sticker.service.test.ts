@@ -11,6 +11,7 @@ import {
   convertVideoToSticker,
   StickerTooLargeError,
   MAX_STICKER_BYTES,
+  MAX_VIDEO_SECONDS,
 } from "./sticker.service";
 
 const fixturesDir = path.join(
@@ -21,6 +22,7 @@ const fixturesDir = path.join(
 let imageFixture: Buffer;
 let videoFixture: Buffer;
 let oversizedVideoFixture: Buffer;
+let longVideoFixture: Buffer;
 
 function generateFixture(lavfiArgs: string[], outputPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -76,6 +78,17 @@ before(async () => {
     oversizedPath
   );
   oversizedVideoFixture = await fs.readFile(oversizedPath);
+
+  // Mais longo que o limite de duração do comando: usado pra garantir que o
+  // próprio ffmpeg corta em MAX_VIDEO_SECONDS, não só a checagem que o
+  // comando faz antes de baixar a mídia (defesa em profundidade contra um
+  // metadado "seconds" ausente ou forjado).
+  const longPath = path.join(fixturesDir, "long.mp4");
+  await generateFixture(
+    ["-f", "lavfi", "-i", "testsrc=size=320x240:rate=15", "-t", "15"],
+    longPath
+  );
+  longVideoFixture = await fs.readFile(longPath);
 });
 
 after(async () => {
@@ -111,5 +124,72 @@ test("convertVideoToSticker rejeita um resultado grande demais", async () => {
   await assert.rejects(
     () => convertVideoToSticker(oversizedVideoFixture),
     StickerTooLargeError
+  );
+});
+
+test("convertImageToSticker preenche as bordas com padding transparente, nao preto opaco", async () => {
+  const sticker = await convertImageToSticker(imageFixture);
+  const img = new Image();
+  await img.load(sticker);
+  assert.ok(
+    img.hasAlpha,
+    "imagem nao-quadrada preenchida (padding) precisa ter canal alpha"
+  );
+});
+
+test("convertVideoToSticker preenche as bordas com padding transparente, nao preto opaco", async () => {
+  const sticker = await convertVideoToSticker(videoFixture);
+  const img = new Image();
+  await img.load(sticker);
+  assert.ok(
+    img.hasAlpha,
+    "video nao-quadrado preenchido (padding) precisa ter canal alpha"
+  );
+});
+
+test("convertImageToSticker produz um cabecalho RIFF com o tamanho correto", async () => {
+  const sticker = await convertImageToSticker(imageFixture);
+  const declaredSize = sticker.readUInt32LE(4);
+  assert.equal(
+    declaredSize,
+    sticker.length - 8,
+    "ffmpeg nao pode deixar o campo de tamanho do RIFF zerado/errado (acontece quando a saida vai por um pipe nao-seekable); " +
+      "alguns parsers de webp toleram isso, outros nao — o arquivo precisa ser valido de verdade"
+  );
+});
+
+test("convertVideoToSticker produz um cabecalho RIFF com o tamanho correto", async () => {
+  const sticker = await convertVideoToSticker(videoFixture);
+  const declaredSize = sticker.readUInt32LE(4);
+  assert.equal(
+    declaredSize,
+    sticker.length - 8,
+    "ffmpeg nao pode deixar o campo de tamanho do RIFF zerado/errado (acontece quando a saida vai por um pipe nao-seekable); " +
+      "alguns parsers de webp toleram isso, outros nao — o arquivo precisa ser valido de verdade"
+  );
+});
+
+test("convertVideoToSticker corta a saida no limite mesmo se a entrada for mais longa", async () => {
+  const sticker = await convertVideoToSticker(longVideoFixture);
+  const img = new Image();
+  await img.load(sticker);
+  const maxFrames = MAX_VIDEO_SECONDS * 10; // 10fps de saida
+  assert.ok(
+    (img.frameCount ?? 0) <= maxFrames + 2,
+    `esperava no maximo ~${maxFrames} frames (${MAX_VIDEO_SECONDS}s a 10fps), recebeu ${img.frameCount}`
+  );
+});
+
+test("convertImageToSticker rejeita se o ffmpeg exceder o tempo limite", async () => {
+  await assert.rejects(
+    () => convertImageToSticker(imageFixture, 1),
+    /tempo limite/
+  );
+});
+
+test("convertVideoToSticker rejeita se o ffmpeg exceder o tempo limite", async () => {
+  await assert.rejects(
+    () => convertVideoToSticker(videoFixture, 1),
+    /tempo limite/
   );
 });
