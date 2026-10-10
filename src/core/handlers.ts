@@ -3,7 +3,7 @@ import { ApiService } from "../services/api.service";
 import { CooldownService } from "../services/cooldown.service";
 import { StrategyFactory } from "../factories/strategy.factory";
 import { CommandFactory } from "../factories/command.factory";
-import { parseMessage } from "../utils/message-parser";
+import { parseMessage, extractMessageText, extractCommandKey } from "../utils/message-parser";
 import { UserValidator } from "../utils/user-validator";
 import { validateMessageContext } from "../utils/message-validator";
 import { podeUsar, remetente } from "../core/permissoes";
@@ -37,12 +37,7 @@ export async function handleMessages(
     const chatId = msg.key.remoteJid!;
     
     if (isGroup) {
-      const commandKey = (() => {
-        const rawText = msg.message.conversation || msg.message.extendedTextMessage?.text;
-        if (!rawText) return "unknown";
-        const match = rawText.match(/^!(\w+)/);
-        return match ? match[1].toLowerCase() : "unknown";
-      })();
+      const commandKey = extractCommandKey(msg.message);
 
       let groupCooldowns = groupCommandCooldowns.get(chatId);
 
@@ -72,8 +67,7 @@ export async function handleMessages(
       msg.message = msg.message.ephemeralMessage.message;
     }
 
-    const messageContent =
-      msg.message.conversation || msg.message.extendedTextMessage?.text;
+    const messageContent = extractMessageText(msg.message);
     if (!messageContent) return;
 
     const parsed = parseMessage(messageContent);

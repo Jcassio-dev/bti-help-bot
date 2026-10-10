@@ -44,6 +44,12 @@ Lista gerada a partir de `src/commands/`. Todo comando aceita o prefixo `!`.
 | `!secretaria` | — | Envia o contato da secretaria. |
 | `!links` | `!link`, `!comunidade`, `!grupo` | Retorna links relacionados à comunidade do BTI |
 
+### Diversão
+
+| Comando | Apelidos | Descrição |
+| --- | --- | --- |
+| `!figurinha` | `!sticker`, `!fig` | Transforma foto, vídeo ou gif (na legenda) em figurinha. _(só no privado)_ |
+
 ### Oportunidades
 
 | Comando | Apelidos | Descrição |
@@ -69,7 +75,7 @@ Lista gerada a partir de `src/commands/`. Todo comando aceita o prefixo `!`.
 | `!aviso` | — | Envia um aviso (restrito a moderadores). |
 | `!sugestoes` | `!sugestões`, `!backlog` | Lista as sugestões (moderadores). |
 
-Os comandos `aviso`, `dashboard`, `ping`, `sugestoes`, `uso` não entram nas métricas de uso, porque têm `loggable = false`.
+Os comandos `aviso`, `dashboard`, `figurinha`, `ping`, `sugestoes`, `uso` não entram nas métricas de uso, porque têm `loggable = false`.
 ---
 
 ## 🚀 Como Rodar Localmente
@@ -78,6 +84,7 @@ Os comandos `aviso`, `dashboard`, `ping`, `sugestoes`, `uso` não entram nas mé
 
 - Node.js (versão 20 ou superior)
 - npm ou yarn
+- ffmpeg instalado no sistema (`apt install ffmpeg` / `brew install ffmpeg`) — necessário para o comando `!figurinha`
 - Conta do WhatsApp para conectar o bot
 
 ### Instalação

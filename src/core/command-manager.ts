@@ -20,7 +20,11 @@ export class CommandManager {
     const commandsPath = path.join(__dirname, "..", "commands");
     const commandFiles = fs
       .readdirSync(commandsPath)
-      .filter((file) => file.endsWith(".ts") || file.endsWith(".js"));
+      .filter(
+        (file) =>
+          (file.endsWith(".ts") || file.endsWith(".js")) &&
+          !file.includes(".test.")
+      );
 
     for (const file of commandFiles) {
       try {

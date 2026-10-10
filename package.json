@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node -r dotenv/config src/index.ts",
+    "test": "node -r ts-node/register --test $(find src -name '*.test.ts')",
     "build": "tsc && cp -r src/resources dist/",
     "start": "node -r dotenv/config dist/index.js",
     "pm2:start": "pm2 start npm --name bti-bot -- start",
@@ -21,6 +22,7 @@
     "baileys": "^6.6.0",
     "cheerio": "^1.0.0",
     "dotenv": "^17.2.3",
+    "node-webpmux": "^3.2.1",
     "nodemon": "^3.1.10",
     "puppeteer-core": "^25.1.0",
     "qrcode-terminal": "^0.12.0",
