@@ -127,23 +127,21 @@ test("convertVideoToSticker rejeita um resultado grande demais", async () => {
   );
 });
 
-test("convertImageToSticker preenche as bordas com padding transparente, nao preto opaco", async () => {
+test("convertImageToSticker preenche o quadro todo, sem bordas transparentes", async () => {
+  // Prova o enquadramento "cover" (preenche e corta o excesso) em vez do
+  // antigo "contain" (cabe tudo e deixa borda transparente): numa imagem
+  // 320x240 (nao-quadrada) ajustada pra 512x512, o canto so fica
+  // transparente se ainda sobrar padding.
   const sticker = await convertImageToSticker(imageFixture);
+  await Image.initLib();
   const img = new Image();
   await img.load(sticker);
-  assert.ok(
-    img.hasAlpha,
-    "imagem nao-quadrada preenchida (padding) precisa ter canal alpha"
-  );
-});
-
-test("convertVideoToSticker preenche as bordas com padding transparente, nao preto opaco", async () => {
-  const sticker = await convertVideoToSticker(videoFixture);
-  const img = new Image();
-  await img.load(sticker);
-  assert.ok(
-    img.hasAlpha,
-    "video nao-quadrado preenchido (padding) precisa ter canal alpha"
+  const pixels = await img.getImageData();
+  const cornerAlpha = pixels[3];
+  assert.equal(
+    cornerAlpha,
+    255,
+    "imagem nao-quadrada enquadrada em 512x512 por cover+crop nao pode deixar canto transparente — isso seria sobra de padding"
   );
 });
 

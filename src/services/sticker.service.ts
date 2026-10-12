@@ -9,7 +9,11 @@ export const MAX_STICKER_BYTES = 1_000_000;
 export const MAX_VIDEO_SECONDS = 10;
 
 const STICKER_SIZE = 512;
-const PAD_FILTER = `scale=${STICKER_SIZE}:${STICKER_SIZE}:force_original_aspect_ratio=decrease,pad=${STICKER_SIZE}:${STICKER_SIZE}:(ow-iw)/2:(oh-ih)/2:color=0x00000000,format=rgba`;
+// "cover": scale up until the frame fully covers 512x512, then crop the
+// excess (centered by default). Fills the whole sticker instead of the
+// old "contain" (scale down to fit, pad the leftover with transparency),
+// which left ugly letterbox bars on non-square media.
+const FRAME_FILTER = `scale=${STICKER_SIZE}:${STICKER_SIZE}:force_original_aspect_ratio=increase,crop=${STICKER_SIZE}:${STICKER_SIZE},format=rgba`;
 const DEFAULT_FFMPEG_TIMEOUT_MS = 30_000;
 // Checked while ffmpeg is still running, against a file it's still writing —
 // generous on purpose so a legitimate near-the-edge encode isn't killed
@@ -166,7 +170,7 @@ export async function convertImageToSticker(
       "-i",
       inputPath,
       "-vf",
-      PAD_FILTER,
+      FRAME_FILTER,
       "-vcodec",
       "libwebp",
       "-pix_fmt",
@@ -194,7 +198,7 @@ export async function convertVideoToSticker(
       "-t",
       String(MAX_VIDEO_SECONDS),
       "-vf",
-      `fps=10,${PAD_FILTER}`,
+      `fps=10,${FRAME_FILTER}`,
       "-vcodec",
       "libwebp",
       "-pix_fmt",
