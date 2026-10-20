@@ -1,11 +1,31 @@
 import { WAMessage, WASocket, AnyMessageContent } from "baileys";
 import { BaseCommand } from "../types/command";
 import axios from "axios";
+import fs from "fs";
+import https from "https";
+import path from "path";
+import tls from "tls";
 
 const SCRAP_CONFIG = {
   URL: "https://jerimumjobs.imd.ufrn.br/jerimumjobs/oportunidade/listarJSON",
   PAGE: 1,
 };
+
+const jerimumAgent = new https.Agent({
+  ca: [
+    ...tls.rootCertificates,
+    fs.readFileSync(
+      path.resolve(
+        __dirname,
+        "..",
+        "resources",
+        "certs",
+        "rnp-icpedu-gr46-ov-tls-ca-2025.pem"
+      ),
+      "utf8"
+    ),
+  ],
+});
 
 interface Job {
   title: string;
@@ -33,7 +53,7 @@ async function scrapeJobsRecursive(jobsList: Job[], page = 1): Promise<Job[]> {
         dataValidade: string;
         id: number;
       }[]
-    >(`${SCRAP_CONFIG.URL}/${page}`);
+    >(`${SCRAP_CONFIG.URL}/${page}`, { httpsAgent: jerimumAgent });
 
     if (data.length === 0) {
       return jobsList;
